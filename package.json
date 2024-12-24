@@ -1,0 +1,40 @@
+{
+  "name": "lahuellaapi",
+  "version": "1.0.0",
+  "description": "Api for Clínica veterinaria La Huella",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate:mysql": "node migrations/mysql.js",
+    "seed:mysql": "node seeders/mysqlseeder.js",
+    "dev": "node --watch app.js"
+  },
+  "keywords": [
+    "api",
+    "lahuella",
+    "nodejs",
+    "javascript",
+    "express"
+  ],
+  "author": "Juanlu3095",
+  "license": "ISC",
+  "devDependencies": {
+    "standard": "^17.1.2"
+  },
+  "eslintConfig": {
+    "extends": "standard"
+  },
+  "[javascript]": {
+    "editor.formatOnSave": "true"
+  },
+  "editor.codeActionOnSave": {
+    "source.fixAll.eslint": "true"
+  },
+  "dependencies": {
+    "cors": "2.8.5",
+    "express": "4.21.2",
+    "mysql2": "^3.11.5",
+    "zod": "3.24.1"
+  }
+}
