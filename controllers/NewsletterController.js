@@ -14,7 +14,7 @@ export class NewsletterController {
 
   getById = async (req, res) => {
     const { id } = req.params
-    const newsletter = await this.newsletterModel.getById({ id })
+    const [newsletter] = await this.newsletterModel.getById({ id })
     if (newsletter) {
       return res.json(newsletter)
     } else {

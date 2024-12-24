@@ -14,7 +14,7 @@ const connection = await mysql.createConnection(config)
 export class newsletterModel {
   static async getAll () {
     const [newsletters] = await connection.query(
-      'SELECT BIN_TO_UUID(id, true), email FROM newsletters;'
+      'SELECT HEX(id) as id, email FROM newsletters;'
     )
 
     // Si no encuentra registros en la base de datos
@@ -25,13 +25,19 @@ export class newsletterModel {
     return newsletters
   }
 
-  async getById ({ id }) {
-    const [newsletter] = await connection.query(
-      'SELECT id, email FROM newsletters WHERE id = ?;', id
-    )
+  static async getById ({ id }) {
+    try {
+      const [newsletter] = await connection.query(
+        'SELECT HEX(id) as id, email FROM newsletters WHERE HEX(id) = ?;', id
+      )
 
-    if (newsletter.length === 0) return null
+      if (newsletter.length === 0) return null
 
-    return newsletter
+      return newsletter
+    } catch (error) {
+      console.error('Error en la consulta', error)
+    } finally {
+      await connection.end()
+    }
   }
 }
