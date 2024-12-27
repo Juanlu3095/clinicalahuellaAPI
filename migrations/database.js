@@ -8,7 +8,9 @@ export class DatabaseMigration {
 
   // NO es static, ya que si lo fuera no puede acceder a this.configuracion. En ese caso habría que pasar config como parámetro
   async createDB () {
-    const connection = await mysql.createConnection(this.configuracion)
+    const config = { ...this.configuracion } // Clonamos el objeto this.configuracion con spread operator
+    delete config.database // Eliminamos la propiedad database del objeto clonado, no del original
+    const connection = await mysql.createConnection(config)
 
     try {
       const [db] = await connection.query(

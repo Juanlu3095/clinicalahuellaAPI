@@ -11,11 +11,11 @@ export const createNewsletterRouter = ({ NewsletterModel }) => {
 
   newsletterRouter.get('/:id', newsletterController.getById)
 
-  /* newsletterRouter.post('/', newsletterController.create)
+  newsletterRouter.post('/', newsletterController.create)
+
+  newsletterRouter.put('/:id', newsletterController.update)
 
   newsletterRouter.delete('/:id', newsletterController.delete)
-
-  newsletterRouter.patch('/:id', newsletterController.update) */
 
   return newsletterRouter
 }

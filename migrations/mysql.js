@@ -3,13 +3,6 @@
 import { DatabaseMigration } from './database.js'
 import { NewsletterMigration } from './create_newsletter_table.js'
 
-const dbconfig = {
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: ''
-}
-
 const config = {
   host: 'localhost',
   port: 3306,
@@ -18,17 +11,7 @@ const config = {
   database: 'lahuella_db'
 }
 
-/* const connection = await mysql.createConnection(config)
-
-class mysqldatabase {
-  static async createDB () {
-    const [db] = await connection.query(
-      'CREATE DATABASE IF NOT EXISTS `lahuella_db`;'
-    )
-    return [db]
-  }
-}
-
+/*
 // Función autoinvocado que se ejecutará para crear la base de datos con el comando node mysql.js
 (async () => {
   try {
@@ -42,15 +25,8 @@ class mysqldatabase {
 })() */
 
 // Instancias de las clases para pasarles la configuración de la base de datos
-const databasemigration = new DatabaseMigration({ config: dbconfig })
+const databasemigration = new DatabaseMigration({ config })
 const newslettermigration = new NewsletterMigration({ config })
-
-/* migration.createDB().then((respuesta) => {
-  console.log('Base de datos creada o ya existía.', respuesta)
-  newslettermigration.createNewsletters(config)
-}).catch((err) => {
-  console.error('Error al crear la base de datos:', err)
-}) */
 
 const migrations = async () => {
   const errors = []

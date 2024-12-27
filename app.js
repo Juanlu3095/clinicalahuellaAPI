@@ -1,5 +1,5 @@
 import express, { json } from 'express'
-import cors from 'cors'
+import { applycors } from './middlewares/cors.js'
 import { createNewsletterRouter } from './routes/newsletters.js'
 import { newsletterModel } from './models/newsletter.js'
 
@@ -11,24 +11,7 @@ app.use(json())
 // Desactiva esto de las respuestas de la API
 app.disable('x-powered-by')
 
-// Indicamos al CORS aquellas url que tienen acceso a nuestra API
-app.use(cors({
-  origin: (origin, callback) => {
-    const ACCEPTED_ORIGINS = [
-      '*'
-    ]
-
-    if (ACCEPTED_ORIGINS.includes(origin)) {
-      return callback(null, true)
-    }
-
-    if (!origin) {
-      return callback(null, true)
-    }
-
-    return callback(new Error('Not allowed by CORS'))
-  }
-}))
+app.use(applycors())
 
 app.use('/newsletters', createNewsletterRouter({ NewsletterModel: newsletterModel }))
 

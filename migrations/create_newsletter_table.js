@@ -10,7 +10,7 @@ export class NewsletterMigration {
   async createNewsletters () {
     const connection = await mysql.createConnection(this.configuracion)
     try {
-      const structure = 'id BINARY (16) PRIMARY KEY DEFAULT(UUID()), email VARCHAR(255) NOT NULL'
+      const structure = 'id BINARY (16) PRIMARY KEY DEFAULT(UUID_TO_BIN(UUID())), email VARCHAR(255) NOT NULL'
       const [db] = await connection.query(
         `CREATE TABLE IF NOT EXISTS newsletters (${structure});`
       )
