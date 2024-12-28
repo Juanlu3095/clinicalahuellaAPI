@@ -1,13 +1,13 @@
 ### Recuperar todas las newsletters
-GET http://localhost:1234/newsletters
+GET http://localhost:3000/newsletters
 Origin: http://localhost:4200
 
 ### Recuperar una newsletter por id
-GET http://localhost:1234/newsletters/5B496CC5C49711EFAD0074563C06B87C
+GET http://localhost:3000/newsletters/DF5C24A4C56C11EF8E8774563C06B87C
 Origin: http://localhost:4200
 
 ### Crear newsletter
-POST http://localhost:1234/newsletters
+POST http://localhost:3000/newsletters
 Content-Type: application/json
 
 {
@@ -15,12 +15,12 @@ Content-Type: application/json
 }
 
 ### Actualizar newsletter
-PUT http://localhost:1234/newsletters/5B496CC5C49711EFAD0074563C06B87C
+PUT http://localhost:3000/newsletters/DF5C24A4C56C11EF8E8774563C06B87C
 Content-Type: application/json
 
 {
-  "email": "bendicioneslapepo@gmail.com"
+  "email": "AAAA@gmail.com"
 }
 
 ### Eliminar newsletter
-DELETE http://localhost:1234/newsletters/5B496CC5C49711EFAD0074563C06B87C
+DELETE http://localhost:3000/newsletters/DF5C24A4C56C11EF8E8774563C06B87C

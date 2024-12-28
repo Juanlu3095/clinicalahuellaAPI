@@ -2,6 +2,7 @@ import express, { json } from 'express'
 import { applycors } from './middlewares/cors.js'
 import { createNewsletterRouter } from './routes/newsletters.js'
 import { newsletterModel } from './models/newsletter.js'
+import 'dotenv/config'
 
 const app = express()
 

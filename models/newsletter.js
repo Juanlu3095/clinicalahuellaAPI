@@ -1,13 +1,16 @@
 // Conexión con la base de datos de mysql
 import mysql from 'mysql2/promise'
+import 'dotenv/config'
+
+const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE, POOL_CONNECTIONLIMIT } = process.env
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: '',
-  database: 'lahuella_db',
-  connectionLimit: 10
+  host: DB_HOST,
+  port: DB_PORT,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_DATABASE,
+  connectionLimit: POOL_CONNECTIONLIMIT
 })
 
 /* pool.connect()
@@ -68,10 +71,12 @@ export class newsletterModel {
 
   static async update ({ id, input }) {
     const { email } = input
+    const today = new Date() // Obtenemos la fecha de hoy
+    const date = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace('T', ' ') // Obtenemos la fecha en nuestra timezone en ISO
 
     try {
-      const query = 'UPDATE newsletters SET email = ? WHERE HEX(id) = ?'
-      const values = [email, id]
+      const query = 'UPDATE newsletters SET email = ?, updated_at = ? WHERE HEX(id) = ?'
+      const values = [email, date, id]
       /* const [result, fields] = await connection.query(
         `UPDATE newsletters SET 'email' VALUES (?) WHERE HEX(id) = ${id};`,
         email

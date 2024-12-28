@@ -1,14 +1,18 @@
 // Conexión con la base de datos de mysql
 // import mysql from 'mysql2/promise'
 import { DatabaseMigration } from './database.js'
-import { NewsletterMigration } from './create_newsletter_table.js'
+import { NewsletterMigration } from './create_newsletters_table.js'
+import 'dotenv/config' // Debemos declarar esto aquí porque no pasamos el objeto config desde app.js, son independientes las migraciones del resto de la aplicación
+import { MessageMigration } from './create_messages_table.js'
+
+const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE } = process.env
 
 const config = {
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: '',
-  database: 'lahuella_db'
+  host: DB_HOST,
+  port: DB_PORT,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_DATABASE
 }
 
 /*
@@ -27,19 +31,21 @@ const config = {
 // Instancias de las clases para pasarles la configuración de la base de datos
 const databasemigration = new DatabaseMigration({ config })
 const newslettermigration = new NewsletterMigration({ config })
+const messagemigration = new MessageMigration({ config })
 
 const migrations = async () => {
   const errors = []
 
   const database = await databasemigration.createDB().catch(e => errors.push(e))
   const newsletters = await newslettermigration.createNewsletters().catch(e => errors.push(e))
+  const messages = await messagemigration.createMessages().catch(e => errors.push(e))
 
   if (errors.length > 0) {
-    console.log('Error en la llamada de las migraciones:', errors)
+    console.log('Error en la llamada de las migraciones:', config.database)
   }
 
   return [
-    database, newsletters
+    database, newsletters, messages
   ]
 }
 

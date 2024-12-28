@@ -1,3 +1,5 @@
+import { validateNewsletter } from '../schemas/NewsletterSchema.js'
+
 /**
  * @property {string} newsletterModel
  */
@@ -25,10 +27,15 @@ export class NewsletterController {
   create = async (req, res) => {
     // const input = { requestBody: req.body }
     // res.json(input.requestBody)
-    const input = req.body
+    const input = validateNewsletter(req.body)
     // const { email } = input
     // res.json({ input })
-    const newsletter = await this.newsletterModel.create({ input })
+    if (!input.success) {
+      return res.status(400).json({ error: JSON.parse(input.error.message) })
+    }
+
+    const newsletter = await this.newsletterModel.create({ input: input.data })
+
     if (newsletter) {
       res.status(201).json({ message: 'Newsletter creada.' })
     } else {
@@ -38,12 +45,14 @@ export class NewsletterController {
 
   update = async (req, res) => {
     // const { email } = req.body
-    const input = req.body
+    const input = validateNewsletter(req.body)
     const { id } = req.params
 
-    // res.json(`Input: ${email}, Id: ${id}`)
+    if (!input.success) {
+      return res.status(400).json({ error: JSON.parse(input.error.message) })
+    }
 
-    const newsletter = await this.newsletterModel.update({ id, input })
+    const newsletter = await this.newsletterModel.update({ id, input: input.data }) // Al pasar la validacion el email está en input.data
     if (newsletter) {
       res.status(200).json({ message: 'Newsletter actualizada.', newsletter })
     } else {
