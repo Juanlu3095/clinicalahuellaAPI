@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import { NewsletterController } from '../controllers/NewsletterController.js'
-// import { newsletterModel } from '../models/newsletter.js'
 
 export const createNewsletterRouter = ({ NewsletterModel }) => {
   const newsletterRouter = Router()

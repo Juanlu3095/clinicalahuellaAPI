@@ -1,7 +1,9 @@
 import express, { json } from 'express'
 import { applycors } from './middlewares/cors.js'
-import { createNewsletterRouter } from './routes/newsletters.js'
+import { createNewsletterRouter } from './routes/NewsletterRouter.js'
+import { createMessageRouter } from './routes/MessageRouter.js'
 import { newsletterModel } from './models/newsletter.js'
+import { messageModel } from './models/message.js'
 import 'dotenv/config'
 
 const app = express()
@@ -14,7 +16,9 @@ app.disable('x-powered-by')
 
 app.use(applycors())
 
+/* Rutas */
 app.use('/newsletters', createNewsletterRouter({ NewsletterModel: newsletterModel }))
+app.use('/messages', createMessageRouter({ MessageModel: messageModel }))
 
 const PORT = process.env.PORT ?? 1234
 

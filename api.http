@@ -11,11 +11,11 @@ POST http://localhost:3000/newsletters
 Content-Type: application/json
 
 {
-  "email": "pepi@gmail.com"
+  "email": "papitoremolino@gmail.com"
 }
 
 ### Actualizar newsletter
-PUT http://localhost:3000/newsletters/DF5C24A4C56C11EF8E8774563C06B87C
+PUT http://localhost:3000/newsletters/768E83ADC63411EF99C974563C06B87C
 Content-Type: application/json
 
 {
@@ -24,3 +24,53 @@ Content-Type: application/json
 
 ### Eliminar newsletter
 DELETE http://localhost:3000/newsletters/DF5C24A4C56C11EF8E8774563C06B87C
+
+### Recuperar todas los mensajes
+GET http://localhost:3000/messages
+Origin: http://localhost:4200
+
+### Recuperar un mensaje por id
+GET http://localhost:3000/messages/0DDE4F71C62211EF99C974563C06B87C
+Origin: http://localhost:4200
+
+### Crear mensaje
+POST http://localhost:3000/messages
+Content-Type: application/json
+
+{
+  "nombre": "Pepe",
+  "apellidos": "González",
+  "email": "pepi@gmail.com",
+  "telefono": 952122331,
+  "asunto": "Hola qué tal",
+  "mensaje": "Este es el mensaje creado."
+}
+
+### Actualizar mensajes
+PUT http://localhost:3000/messages/D88464BCC63111EF99C974563C06B87C
+Content-Type: application/json
+
+{
+  "nombre": "Alberto",
+  "apellidos": "Pepep",
+  "email": "peasi@gmail.com",
+  "telefono": 952222222,
+  "asunto": "Hola qué tal payo",
+  "mensaje": "Este es el mensaje creado."
+}
+
+### Actualizar mensajes
+PATCH  http://localhost:3000/messages/D88464BCC63111EF99C974563C06B87C
+Content-Type: application/json
+
+{
+  "nombre": "Jacinta",
+  "apellidos": "aaa",
+  "email": "paa@gmail.com",
+  "telefono": 952562722,
+  "asunto": "Hola qué tal papu",
+  "mensaje": "Este es el mensaje creado."
+}
+
+### Eliminar mensaje
+DELETE http://localhost:3000/messages/DF5D43D2C56C11EF8E8774563C06B87C

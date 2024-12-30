@@ -13,7 +13,7 @@ export class NewsletterSeeder {
     try {
       const db = await Promise.all(
         values.map(async function (element) {
-          const [result] = await connection.query(
+          const [result] = await connection.execute(
             'INSERT into newsletters (email) VALUES (?);', [element]
           )
           filasafectadas = filasafectadas + result.affectedRows

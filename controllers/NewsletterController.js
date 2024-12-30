@@ -1,6 +1,7 @@
 import { validateNewsletter } from '../schemas/NewsletterSchema.js'
 
 /**
+ * It allows to use a model for this controller
  * @property {string} newsletterModel
  */
 
