@@ -1,3 +1,4 @@
+import { BookingSeeder } from './bookingseeder.js'
 import { MessageSeeder } from './messageseeder.js'
 import { NewsletterSeeder } from './newsletterseeder.js'
 import 'dotenv/config'
@@ -15,19 +16,21 @@ const config = {
 // Instanciamos las clases para usarlas, inyectándoles config
 const newsletterSeeder = new NewsletterSeeder({ config })
 const messageSeeder = new MessageSeeder({ config })
+const bookingsSeeder = new BookingSeeder({ config })
 
 const seeders = async () => {
   const errors = []
 
   const newsletters = await newsletterSeeder.createnewsletter().catch(e => errors.push(e))
   const messages = await messageSeeder.createmessage().catch(e => errors.push(e))
+  const bookings = await bookingsSeeder.createBooking().catch(e => errors.push(e))
 
   if (errors.length > 0) {
     console.error('Error en la llamada de los seeders:', errors)
   }
 
   return [
-    newsletters, messages
+    newsletters, messages, bookings
   ]
 }
 
