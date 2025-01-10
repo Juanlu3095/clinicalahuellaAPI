@@ -11,17 +11,18 @@ export class BookingMigration {
     const structure = `id BINARY (16) PRIMARY KEY DEFAULT(UUID_TO_BIN(UUID())), nombre VARCHAR(100) NOT NULL, apellidos VARCHAR(100) NOT NULL, email VARCHAR(255) NOT NULL,
                        telefono VARCHAR(50) NOT NULL, fecha DATE NOT NULL, hora TIME NOT NULL, created_at TIMESTAMP DEFAULT(NOW()) NOT NULL,
                        updated_at TIMESTAMP DEFAULT(CURRENT_TIMESTAMP) NOT NULL`
+
     return new Promise((resolve, reject) => {
       connection.query(
-            `CREATE TABLE IF NOT EXISTS bookings (${structure});`,
-            function (err, result, fields) {
-              if (err) {
-                console.error('Error al crear la tabla de bookings:', err)
-                reject(err)
-              }
-              console.log('Tabla bookings creada con éxito.')
-              resolve(result)
-            }
+        `CREATE TABLE IF NOT EXISTS bookings (${structure});`,
+        function (err, result, fields) {
+          if (err) {
+            console.error('Error al crear la tabla de bookings:', err)
+            reject(err)
+          }
+          console.log('Tabla bookings creada con éxito.')
+          resolve(result)
+        }
       )
       connection.end()
     })

@@ -74,3 +74,40 @@ Content-Type: application/json
 
 ### Eliminar mensaje
 DELETE http://localhost:3000/messages/DF5D43D2C56C11EF8E8774563C06B87C
+
+### Recuperar todas los bookings
+GET http://localhost:3000/bookings
+Origin: http://localhost:4200
+
+### Recuperar un booking por id
+GET http://localhost:3000/bookings/258ECCC8C7BA11EF893874563C06B87C
+Origin: http://localhost:4200
+
+### Crear booking
+POST http://localhost:3000/bookings
+Content-Type: application/json
+
+{
+  "nombre": "Pepe",
+  "apellidos": "González",
+  "email": "pepi@gmail.com",
+  "telefono": 952122331,
+  "fecha": "2025-03-20",
+  "hora": "15:30:00"
+}
+
+### Actualizar booking
+PATCH  http://localhost:3000/bookings/258ECCC8C7BA11EF893874563C06B87C
+Content-Type: application/json
+
+{
+  "nombre": "Jacinta",
+  "apellidos": "aaa",
+  "email": "paa@gmail.com",
+  "telefono": 952562722,
+  "fecha": "2025-03-26",
+  "hora": "17:30:00"
+}
+
+### Eliminar booking
+DELETE http://localhost:3000/bookings/1CB9FF54CF8B11EF96BD74563C06B87C
