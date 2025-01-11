@@ -8,13 +8,13 @@ export const applycors = () =>
       ]
 
       if (ACCEPTED_ORIGINS.includes(origin)) {
-        console.log('ola')
+        console.log('cors correcto')
         return callback(null, true)
       }
 
       // Esto es sólo para desarrollo, pues REST Client no manda origin
       if (!origin) {
-        console.log('adios')
+        console.log('cors incorrecto')
         return callback(null, true)
       }
 

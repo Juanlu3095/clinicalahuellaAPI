@@ -1,3 +1,4 @@
+import { BookingResource } from '../resources/BookingResource.js'
 import { validateBooking, validatePartialBooking } from '../schemas/BookingSchema.js'
 
 /**
@@ -12,14 +13,16 @@ export class BookingController {
 
   getAll = async (req, res) => {
     const bookings = await this.bookingModel.getAll()
-    res.json(bookings)
+    const requestUrl = new URL(req.connection.encrypted ? 'https' : 'http' + '://' + req.headers.referrer)
+    res.json(BookingResource.protectedArray(bookings, requestUrl))
   }
 
   getById = async (req, res) => {
     const { id } = req.params
     const booking = await this.bookingModel.getById({ id })
+    const requestUrl = new URL(req.connection.encrypted ? 'https' : 'http' + '://' + req.headers.referrer)
     if (booking) {
-      return res.json(booking)
+      return res.json(BookingResource.protected(booking, requestUrl))
     } else {
       return res.status(404).json({ respuesta: 'Reserva no encontrada.' })
     }
