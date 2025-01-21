@@ -13,7 +13,7 @@ export class BookingController {
 
   getAll = async (req, res) => {
     const bookings = await this.bookingModel.getAll()
-    const requestUrl = new URL(req.connection.encrypted ? 'https' : 'http' + '://' + req.headers.referrer)
+    const requestUrl = new URL(req.connection.encrypted ? 'https' : 'http' + '://' + req.headers.referrer) // Obtrenemos URL completa de donde viene la soliciud
     res.json(BookingResource.protectedArray(bookings, requestUrl))
   }
 
