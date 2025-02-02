@@ -66,7 +66,7 @@ export class BookingController {
     if (booking) {
       res.status(200).json({ respuesta: 'Reserva eliminada.', booking })
     } else {
-      return res.status(404).json({ respuesta: 'Rserva no encontrada.' })
+      return res.status(404).json({ respuesta: 'Reserva no encontrada.' })
     }
   }
 }

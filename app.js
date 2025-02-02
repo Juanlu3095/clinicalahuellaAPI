@@ -3,12 +3,14 @@ import { applycors } from './middlewares/cors.js'
 import { createNewsletterRouter } from './routes/NewsletterRouter.js'
 import { createMessageRouter } from './routes/MessageRouter.js'
 import { createBookingRouter } from './routes/BookingRouter.js'
+import { createAppointmentRouter } from './routes/AppointmentRouter.js'
+import { createPostRouter } from './routes/PostRouter.js'
 import { newsletterModel } from './models/newsletter.js'
 import { messageModel } from './models/message.js'
+import { appointmentModel } from './models/appointment.js'
 import { bookingModel } from './models/booking.js'
 import { postModel } from './models/post.js'
 import 'dotenv/config'
-import { createPostRouter } from './routes/PostRouter.js'
 
 const app = express()
 
@@ -24,6 +26,7 @@ app.use(applycors())
 app.use('/newsletters', createNewsletterRouter({ NewsletterModel: newsletterModel }))
 app.use('/messages', createMessageRouter({ MessageModel: messageModel }))
 app.use('/bookings', createBookingRouter({ BookingModel: bookingModel }))
+app.use('/appointments', createAppointmentRouter({ AppointmentModel: appointmentModel }))
 app.use('/posts', createPostRouter({ PostModel: postModel }))
 
 const PORT = process.env.PORT ?? 1234

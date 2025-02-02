@@ -1,6 +1,6 @@
 import z from 'zod'
 
-const Booking = z.object({
+const Appointment = z.object({
   nombre: z.string({ required_error: 'El campo nombre es requerido.', invalid_type_error: 'El campo nombre debe ser un string.' }),
   apellidos: z.string({ required_error: 'El campo apellidos es requerido.', invalid_type_error: 'El campo apellidos debe ser un string.' }),
   email: z.string({ required_error: 'El campo email es requerido.', invalid_type_error: 'El campo email debe ser un string.' }).email({ message: 'El campo email debe ser un email.' }),
@@ -11,10 +11,10 @@ const Booking = z.object({
 
 // Podríamos desestructurar para decirle a la función qué campos vamos a validar exactamente: const Validate = ({ username = "Pepe", ... }) => ...
 
-export const validateBooking = (booking) => {
-  return Booking.required().safeParse(booking)
+export const validateAppointment = (appointment) => {
+  return Appointment.required().safeParse(appointment)
 }
 
-export const validatePartialBooking = (booking) => {
-  return Booking.partial().safeParse(booking)
+export const validatePartialAppointment = (appointment) => {
+  return Appointment.partial().safeParse(appointment)
 }
