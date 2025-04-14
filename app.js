@@ -11,6 +11,8 @@ import { appointmentModel } from './models/appointment.js'
 import { bookingModel } from './models/booking.js'
 import { postModel } from './models/post.js'
 import 'dotenv/config'
+import { createCategoryRouter } from './routes/CategoriesRouter.js'
+import { categoryModel } from './models/category.js'
 
 const app = express()
 
@@ -28,6 +30,7 @@ app.use('/messages', createMessageRouter({ MessageModel: messageModel }))
 app.use('/bookings', createBookingRouter({ BookingModel: bookingModel }))
 app.use('/appointments', createAppointmentRouter({ AppointmentModel: appointmentModel }))
 app.use('/posts', createPostRouter({ PostModel: postModel }))
+app.use('/categories', createCategoryRouter({ CategoryModel: categoryModel }))
 
 const PORT = process.env.PORT ?? 1234
 

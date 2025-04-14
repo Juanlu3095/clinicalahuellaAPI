@@ -12,16 +12,16 @@ export class NewsletterController {
 
   getAll = async (req, res) => {
     const newsletters = await this.newsletterModel.getAll()
-    res.json(newsletters)
+    res.json({ message: 'Newsletters encontradas', data: newsletters })
   }
 
   getById = async (req, res) => {
     const { id } = req.params
     const newsletter = await this.newsletterModel.getById({ id })
     if (newsletter) {
-      return res.json(newsletter)
+      return res.json({ message: 'Newsletter encontrada.', data: newsletter })
     } else {
-      return res.status(404).json({ message: 'Newsletter not found' })
+      return res.status(404).json({ message: 'Newsletter no encontrada.' })
     }
   }
 
@@ -55,7 +55,7 @@ export class NewsletterController {
 
     const newsletter = await this.newsletterModel.update({ id, input: input.data }) // Al pasar la validacion el email está en input.data
     if (newsletter) {
-      res.status(200).json({ message: 'Newsletter actualizada.', newsletter })
+      res.status(200).json({ message: 'Newsletter actualizada.', data: newsletter })
     } else {
       return res.status(404).json({ message: 'Newsletter no encontrada.' })
     }
@@ -66,7 +66,7 @@ export class NewsletterController {
     const newsletter = await this.newsletterModel.delete({ id })
 
     if (newsletter) {
-      res.status(200).json({ message: 'Newsletter eliminada.', newsletter })
+      res.status(200).json({ message: 'Newsletter eliminada.', data: newsletter })
     } else {
       return res.status(404).json({ message: 'Newsletter no encontrada.' })
     }

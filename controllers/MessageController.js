@@ -21,7 +21,7 @@ export class MessageController {
     if (message) {
       return res.json(message)
     } else {
-      return res.status(404).json({ respuesta: 'Mensaje no encontrado' })
+      return res.status(404).json({ message: 'Mensaje no encontrado' })
     }
   }
 
@@ -34,9 +34,9 @@ export class MessageController {
     const message = await this.messageModel.create({ input: input.data })
 
     if (message) {
-      res.status(201).json({ respuesta: 'Mensaje creado.' })
+      res.status(201).json({ message: 'Mensaje enviado.' })
     } else {
-      return res.status(404).json({ respuesta: 'Mensaje no creado.' })
+      return res.status(404).json({ message: 'Mensaje no creado.' })
     }
   }
 
@@ -50,9 +50,9 @@ export class MessageController {
 
     const message = await this.messageModel.update({ id, input: input.data })
     if (message) {
-      res.status(200).json({ respuesta: 'Mensaje actualizado.', message })
+      res.status(200).json({ message: 'Mensaje actualizado.', data: message })
     } else {
-      return res.status(404).json({ respuesta: 'Mensaje no encontrado.' })
+      return res.status(404).json({ message: 'Mensaje no encontrado.' })
     }
   }
 
@@ -66,9 +66,9 @@ export class MessageController {
 
     const message = await this.messageModel.patch({ id, input: input.data })
     if (message) {
-      res.status(200).json({ respuesta: 'Mensaje actualizado.', message })
+      res.status(200).json({ message: 'Mensaje actualizado.', data: message })
     } else {
-      return res.status(404).json({ respuesta: 'Mensaje no encontrado.' })
+      return res.status(404).json({ message: 'Mensaje no encontrado.' })
     }
   }
 
@@ -77,9 +77,9 @@ export class MessageController {
     const message = await this.messageModel.delete({ id })
 
     if (message) {
-      res.status(200).json({ respuesta: 'Mensaje eliminado.', message })
+      res.status(200).json({ message: 'Mensaje eliminado.', data: message })
     } else {
-      return res.status(404).json({ respuesta: 'Mensaje no encontrado.' })
+      return res.status(404).json({ message: 'Mensaje no encontrado.' })
     }
   }
 }
