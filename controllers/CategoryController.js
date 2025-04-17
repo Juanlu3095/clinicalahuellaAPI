@@ -67,4 +67,15 @@ export class CategoryController {
       return res.status(404).json({ mesage: 'Categoría no encontrada.' })
     }
   }
+
+  deleteSelection = async (req, res) => {
+    const { ids } = req.body
+    const categories = await this.categoryModel.deleteSelection({ ids })
+
+    if (categories) {
+      res.json({ message: 'Estos son los ids: ', data: ids })
+    } else {
+      return res.status(404).json({ mesage: 'Categorías no encontradas.' })
+    }
+  }
 }

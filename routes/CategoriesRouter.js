@@ -16,5 +16,7 @@ export const createCategoryRouter = ({ CategoryModel }) => {
 
   categoryRouter.delete('/:id', categoryController.delete)
 
+  categoryRouter.delete('/', categoryController.deleteSelection)
+
   return categoryRouter
 }

@@ -178,6 +178,13 @@ Content-Type: application/json
   "nombre": "Cuidados"
 }
 
-### Borrar categorías
+### Borrar categoría
 DELETE http://localhost:3000/categories/5
 Content-Type: application/json
+
+### Borrar categorías
+DELETE http://localhost:3000/categories
+
+{
+  "ids": ""
+}
