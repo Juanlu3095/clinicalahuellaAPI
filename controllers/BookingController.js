@@ -14,7 +14,7 @@ export class BookingController {
   getAll = async (req, res) => {
     const bookings = await this.bookingModel.getAll()
     const requestUrl = new URL(req.connection.encrypted ? 'https' : 'http' + '://' + req.headers.referrer) // Obtrenemos URL completa de donde viene la soliciud
-    res.json(BookingResource.protectedArray(bookings, requestUrl))
+    res.json({ message: 'Reservas encontradas.', data: BookingResource.protectedArray(bookings, requestUrl) })
   }
 
   getById = async (req, res) => {
@@ -22,24 +22,24 @@ export class BookingController {
     const booking = await this.bookingModel.getById({ id })
     const requestUrl = new URL(req.connection.encrypted ? 'https' : 'http' + '://' + req.headers.referrer)
     if (booking) {
-      return res.json(BookingResource.protected(booking, requestUrl))
+      return res.json({ message: 'Reserva encontrada', data: BookingResource.protected(booking, requestUrl) })
     } else {
-      return res.status(404).json({ respuesta: 'Reserva no encontrada.' })
+      return res.status(404).json({ error: 'Reserva no encontrada.' })
     }
   }
 
   create = async (req, res) => {
     const input = validateBooking(req.body)
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const booking = await this.bookingModel.create({ input: input.data })
 
     if (booking) {
-      res.status(201).json({ respuesta: 'Reserva creada.' })
+      res.status(201).json({ message: 'Reserva creada.' })
     } else {
-      return res.status(404).json({ respuesta: 'Reserva no creada.' })
+      return res.status(500).json({ error: 'Reserva no creada.' })
     }
   }
 
@@ -48,14 +48,14 @@ export class BookingController {
     const { id } = req.params
 
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const booking = await this.bookingModel.patch({ id, input: input.data })
     if (booking) {
-      res.status(200).json({ respuesta: 'Reserva actualizada.', booking })
+      res.json({ message: 'Reserva actualizada.' })
     } else {
-      return res.status(404).json({ respuesta: 'Reserva no encontrada.' })
+      return res.status(404).json({ error: 'Reserva no encontrada.' })
     }
   }
 
@@ -64,9 +64,9 @@ export class BookingController {
     const booking = await this.bookingModel.delete({ id })
 
     if (booking) {
-      res.status(200).json({ respuesta: 'Reserva eliminada.', booking })
+      res.json({ message: 'Reserva eliminada.' })
     } else {
-      return res.status(404).json({ respuesta: 'Reserva no encontrada.' })
+      return res.status(404).json({ error: 'Reserva no encontrada.' })
     }
   }
 }

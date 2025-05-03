@@ -22,14 +22,14 @@ export class PostController {
     if (post) {
       return res.json({ message: 'Post encontrado.', data: post })
     } else {
-      return res.status(404).json({ message: 'Post no encontrado.' })
+      return res.status(404).json({ error: 'Post no encontrado.' })
     }
   }
 
   create = async (req, res) => {
     const input = validatePartialPost(req.body)
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const post = await this.postModel.create({ input: input.data })
@@ -37,7 +37,7 @@ export class PostController {
     if (post) {
       res.status(201).json({ message: 'Post creado.' })
     } else {
-      return res.status(400).json({ message: 'Post no creado.' })
+      return res.status(500).json({ error: 'Post no creado.' })
     }
   }
 
@@ -46,14 +46,14 @@ export class PostController {
     const { id } = req.params
 
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const post = await this.postModel.patch({ id, input: input.data })
     if (post) {
-      res.status(200).json({ message: 'Post actualizado.', data: post })
+      res.json({ message: 'Post actualizado.', data: post })
     } else {
-      return res.status(404).json({ message: 'Post no encontrado.' })
+      return res.status(404).json({ error: 'Post no encontrado.' })
     }
   }
 
@@ -62,9 +62,9 @@ export class PostController {
     const post = await this.postModel.delete({ id })
 
     if (post) {
-      res.status(200).json({ mesage: 'Post eliminado.', data: post })
+      res.json({ mesage: 'Post eliminado.', data: post })
     } else {
-      return res.status(404).json({ mesage: 'Post no encontrado.' })
+      return res.status(404).json({ error: 'Post no encontrado.' })
     }
   }
 }

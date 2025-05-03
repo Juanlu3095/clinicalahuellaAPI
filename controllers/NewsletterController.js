@@ -12,7 +12,7 @@ export class NewsletterController {
 
   getAll = async (req, res) => {
     const newsletters = await this.newsletterModel.getAll()
-    res.json({ message: 'Newsletters encontradas', data: newsletters })
+    res.json({ message: 'Newsletters encontradas.', data: newsletters })
   }
 
   getById = async (req, res) => {
@@ -21,7 +21,7 @@ export class NewsletterController {
     if (newsletter) {
       return res.json({ message: 'Newsletter encontrada.', data: newsletter })
     } else {
-      return res.status(404).json({ message: 'Newsletter no encontrada.' })
+      return res.status(404).json({ error: 'Newsletter no encontrada.' })
     }
   }
 
@@ -32,7 +32,7 @@ export class NewsletterController {
     // const { email } = input
     // res.json({ input })
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const newsletter = await this.newsletterModel.create({ input: input.data })
@@ -40,7 +40,7 @@ export class NewsletterController {
     if (newsletter) {
       res.status(201).json({ message: 'Newsletter creada.' })
     } else {
-      return res.status(404).json({ message: 'Newsletter no creada.' })
+      return res.status(500).json({ error: 'Newsletter no creada.' })
     }
   }
 
@@ -55,9 +55,9 @@ export class NewsletterController {
 
     const newsletter = await this.newsletterModel.update({ id, input: input.data }) // Al pasar la validacion el email está en input.data
     if (newsletter) {
-      res.status(200).json({ message: 'Newsletter actualizada.', data: newsletter })
+      res.json({ message: 'Newsletter actualizada.' })
     } else {
-      return res.status(404).json({ message: 'Newsletter no encontrada.' })
+      return res.status(404).json({ error: 'Newsletter no encontrada.' })
     }
   }
 
@@ -66,9 +66,20 @@ export class NewsletterController {
     const newsletter = await this.newsletterModel.delete({ id })
 
     if (newsletter) {
-      res.status(200).json({ message: 'Newsletter eliminada.', data: newsletter })
+      res.json({ message: 'Newsletter eliminada.' })
     } else {
-      return res.status(404).json({ message: 'Newsletter no encontrada.' })
+      return res.status(404).json({ error: 'Newsletter no encontrada.' })
+    }
+  }
+
+  deleteSelection = async (req, res) => {
+    const { ids } = req.body
+    const newsletters = await this.newsletterModel.deleteSelection({ ids })
+
+    if (newsletters) {
+      res.json({ message: 'Newsletters eliminadas.' }) // Comprobar si esto le sirve de algo al frontend en categorias
+    } else {
+      return res.status(404).json({ error: 'Newsletters no encontradas.' })
     }
   }
 }

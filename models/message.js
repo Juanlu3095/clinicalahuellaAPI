@@ -23,9 +23,9 @@ export class messageModel {
         'SELECT HEX(id) as id, nombre, apellidos, email, telefono, asunto, mensaje, created_at, updated_at FROM messages WHERE HEX(id) = ?;', [id]
       )
 
-      if (message.length === 0) return null
+      if (!message) return null // no es message.length porque se devuelve un objeto y no un array
 
-      return message
+      return message[0] // devolvemos un objeto. Si se quita [0] se devuelve un array
     } catch (error) {
       console.error('Error en la consulta.', error)
     }
@@ -33,7 +33,7 @@ export class messageModel {
 
   static async create ({ input }) {
     const { nombre, apellidos, email, telefono, asunto, mensaje } = input
-    const [uuidResult] = await pool.query('SELECT UUID() uuid;') // Llamamos a mysql para que crea una uuid
+    const [uuidResult] = await pool.query('SELECT UUID() uuid;') // Llamamos a mysql para que cree una uuid
     const [{ uuid }] = uuidResult // igualamos el resultado a uuid y con la desestructuración, sólo muestra el resultado
     try {
       const [message] = await pool.execute(

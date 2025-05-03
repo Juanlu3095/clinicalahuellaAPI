@@ -22,14 +22,14 @@ export class CategoryController {
     if (category) {
       return res.json({ message: 'Categoría encontrada.', data: category })
     } else {
-      return res.status(404).json({ message: 'Categoría no encontrada.' })
+      return res.status(404).json({ error: 'Categoría no encontrada.' })
     }
   }
 
   create = async (req, res) => {
     const input = validatePartialCategory(req.body)
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const category = await this.categoryModel.create({ input: input.data })
@@ -37,7 +37,7 @@ export class CategoryController {
     if (category) {
       res.status(201).json({ message: 'Categoría creada.' })
     } else {
-      return res.status(400).json({ message: 'Categoría no creada.' })
+      return res.status(500).json({ error: 'Categoría no creada.' })
     }
   }
 
@@ -46,14 +46,14 @@ export class CategoryController {
     const { id } = req.params
 
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const category = await this.categoryModel.patch({ id, input: input.data })
     if (category) {
-      res.status(200).json({ message: 'Categoría actualizada.', data: category })
+      res.json({ message: 'Categoría actualizada.', data: category })
     } else {
-      return res.status(404).json({ message: 'Categoría no encontrada.' })
+      return res.status(404).json({ error: 'Categoría no encontrada.' })
     }
   }
 
@@ -62,9 +62,9 @@ export class CategoryController {
     const category = await this.categoryModel.delete({ id })
 
     if (category) {
-      res.status(200).json({ mesage: 'Categoría eliminada.', data: category })
+      res.json({ mesage: 'Categoría eliminada.', data: category })
     } else {
-      return res.status(404).json({ mesage: 'Categoría no encontrada.' })
+      return res.status(404).json({ error: 'Categoría no encontrada.' })
     }
   }
 
@@ -73,9 +73,9 @@ export class CategoryController {
     const categories = await this.categoryModel.deleteSelection({ ids })
 
     if (categories) {
-      res.json({ message: 'Estos son los ids: ', data: ids })
+      res.json({ message: 'Categorías eliminadas.' })
     } else {
-      return res.status(404).json({ mesage: 'Categorías no encontradas.' })
+      return res.status(404).json({ error: 'Categorías no encontradas.' })
     }
   }
 }

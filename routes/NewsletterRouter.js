@@ -16,5 +16,7 @@ export const createNewsletterRouter = ({ NewsletterModel }) => {
 
   newsletterRouter.delete('/:id', newsletterController.delete)
 
+  newsletterRouter.delete('/', newsletterController.deleteSelection)
+
   return newsletterRouter
 }

@@ -12,31 +12,31 @@ export class AppointmentController {
 
   getAll = async (req, res) => {
     const appointments = await this.appointmentModel.getAll()
-    res.json(appointments)
+    res.json({ message: 'Citas encontradas.', data: appointments })
   }
 
   getById = async (req, res) => {
     const { id } = req.params
     const appointment = await this.appointmentModel.getById({ id })
     if (appointment) {
-      return res.json(appointment)
+      return res.json({ message: 'Cita encontrada.', data: appointment })
     } else {
-      return res.status(404).json({ respuesta: 'Cita no encontrada.' })
+      return res.status(404).json({ error: 'Cita no encontrada.' })
     }
   }
 
   create = async (req, res) => {
     const input = validateAppointment(req.body)
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const appointment = await this.appointmentModel.create({ input: input.data })
 
     if (appointment) {
-      res.status(201).json({ respuesta: 'Cita creada.' })
+      res.status(201).json({ message: 'Cita creada.' })
     } else {
-      return res.status(404).json({ respuesta: 'Cita no creada.' })
+      return res.status(404).json({ error: 'Cita no creada.' })
     }
   }
 
@@ -45,14 +45,14 @@ export class AppointmentController {
     const { id } = req.params
 
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const appointment = await this.appointmentModel.patch({ id, input: input.data })
     if (appointment) {
-      res.status(200).json({ respuesta: 'Cita actualizada.', appointment })
+      res.json({ message: 'Cita actualizada.' })
     } else {
-      return res.status(404).json({ respuesta: 'Cita no encontrada.' })
+      return res.status(404).json({ error: 'Cita no encontrada.' })
     }
   }
 
@@ -61,9 +61,9 @@ export class AppointmentController {
     const appointment = await this.appointmentModel.delete({ id })
 
     if (appointment) {
-      res.status(200).json({ respuesta: 'Cita eliminada.', appointment })
+      res.json({ message: 'Cita eliminada.' })
     } else {
-      return res.status(404).json({ respuesta: 'Cita no encontrada.' })
+      return res.status(404).json({ error: 'Cita no encontrada.' })
     }
   }
 }

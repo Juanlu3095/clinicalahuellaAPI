@@ -12,23 +12,23 @@ export class MessageController {
 
   getAll = async (req, res) => {
     const messages = await this.messageModel.getAll()
-    res.json(messages)
+    res.json({ message: 'Mensajes encontrados.', data: messages })
   }
 
   getById = async (req, res) => {
     const { id } = req.params
     const message = await this.messageModel.getById({ id })
     if (message) {
-      return res.json(message)
+      return res.json({ message: 'Mensaje encontrado.', data: message })
     } else {
-      return res.status(404).json({ message: 'Mensaje no encontrado' })
+      return res.status(404).json({ error: 'Mensaje no encontrado.' })
     }
   }
 
   create = async (req, res) => {
     const input = validateMessage(req.body)
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const message = await this.messageModel.create({ input: input.data })
@@ -36,7 +36,7 @@ export class MessageController {
     if (message) {
       res.status(201).json({ message: 'Mensaje enviado.' })
     } else {
-      return res.status(404).json({ message: 'Mensaje no creado.' })
+      return res.status(500).json({ error: 'Mensaje no creado.' })
     }
   }
 
@@ -45,14 +45,14 @@ export class MessageController {
     const { id } = req.params
 
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const message = await this.messageModel.update({ id, input: input.data })
     if (message) {
-      res.status(200).json({ message: 'Mensaje actualizado.', data: message })
+      res.json({ message: 'Mensaje actualizado.' })
     } else {
-      return res.status(404).json({ message: 'Mensaje no encontrado.' })
+      return res.status(404).json({ error: 'Mensaje no encontrado.' })
     }
   }
 
@@ -61,14 +61,14 @@ export class MessageController {
     const { id } = req.params
 
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     const message = await this.messageModel.patch({ id, input: input.data })
     if (message) {
-      res.status(200).json({ message: 'Mensaje actualizado.', data: message })
+      res.json({ message: 'Mensaje actualizado.' })
     } else {
-      return res.status(404).json({ message: 'Mensaje no encontrado.' })
+      return res.status(404).json({ error: 'Mensaje no encontrado.' })
     }
   }
 
@@ -77,9 +77,9 @@ export class MessageController {
     const message = await this.messageModel.delete({ id })
 
     if (message) {
-      res.status(200).json({ message: 'Mensaje eliminado.', data: message })
+      res.json({ message: 'Mensaje eliminado.' })
     } else {
-      return res.status(404).json({ message: 'Mensaje no encontrado.' })
+      return res.status(404).json({ error: 'Mensaje no encontrado.' })
     }
   }
 }

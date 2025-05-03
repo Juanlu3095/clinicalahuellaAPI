@@ -4,7 +4,8 @@ export const applycors = () =>
   cors({
     origin: (origin, callback) => {
       const ACCEPTED_ORIGINS = [
-        'http://localhost:4200'
+        'http://localhost:4200',
+        'http://localhost:9876'
       ]
 
       if (ACCEPTED_ORIGINS.includes(origin)) {

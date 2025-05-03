@@ -25,7 +25,7 @@ export class newsletterModel {
 
       if (newsletter.length === 0) return null
 
-      return newsletter
+      return newsletter[0] // devolvemos un sólo elemento
     } catch (error) {
       console.error('Error en la consulta.', error)
     }
@@ -74,6 +74,19 @@ export class newsletterModel {
       }
     } catch (error) {
       console.error('Error en la consulta.', error)
+    }
+  }
+
+  static async deleteSelection ({ ids }) {
+    try {
+      const query = 'DELETE FROM newsletters WHERE id IN (?)'
+      const [result] = await pool.query(query, [ids])
+
+      if (result.affectedRows > 0) {
+        return result
+      }
+    } catch (error) {
+      console.error('Error en la consulta: ', error)
     }
   }
 }
