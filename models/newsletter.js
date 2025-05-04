@@ -5,7 +5,7 @@ export class newsletterModel {
   static async getAll () {
     try {
       const [newsletters] = await pool.query(
-        'SELECT HEX(id) as id, email FROM newsletters;'
+        'SELECT HEX(id) as id, email, created_at FROM newsletters;'
       )
 
       // Si no encuentra registros en la base de datos
@@ -79,7 +79,7 @@ export class newsletterModel {
 
   static async deleteSelection ({ ids }) {
     try {
-      const query = 'DELETE FROM newsletters WHERE id IN (?)'
+      const query = 'DELETE FROM newsletters WHERE HEX(id) IN (?)'
       const [result] = await pool.query(query, [ids])
 
       if (result.affectedRows > 0) {

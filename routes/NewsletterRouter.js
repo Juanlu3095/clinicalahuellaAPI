@@ -12,7 +12,7 @@ export const createNewsletterRouter = ({ NewsletterModel }) => {
 
   newsletterRouter.post('/', newsletterController.create)
 
-  newsletterRouter.put('/:id', newsletterController.update)
+  newsletterRouter.patch('/:id', newsletterController.update)
 
   newsletterRouter.delete('/:id', newsletterController.delete)
 
