@@ -12,7 +12,11 @@ export class MessageController {
 
   getAll = async (req, res) => {
     const messages = await this.messageModel.getAll()
-    res.json({ message: 'Mensajes encontrados.', data: messages })
+    if (messages) {
+      res.json({ message: 'Mensajes encontrados.', data: messages })
+    } else {
+      res.status(404).json({ error: 'Mensajes no encontrados' })
+    }
   }
 
   getById = async (req, res) => {
@@ -80,6 +84,17 @@ export class MessageController {
       res.json({ message: 'Mensaje eliminado.' })
     } else {
       return res.status(404).json({ error: 'Mensaje no encontrado.' })
+    }
+  }
+
+  deleteSelection = async (req, res) => {
+    const { ids } = req.body
+    const messages = await this.messageModel.deleteSelection({ ids })
+
+    if (messages) {
+      res.json({ message: 'Mensajes eliminados.' })
+    } else {
+      return res.status(404).json({ error: 'Mensajes no encontrados.' })
     }
   }
 }

@@ -18,5 +18,7 @@ export const createMessageRouter = ({ MessageModel }) => {
 
   messageRouter.delete('/:id', messageController.delete)
 
+  messageRouter.delete('/', messageController.deleteSelection)
+
   return messageRouter
 }
