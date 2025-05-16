@@ -1,5 +1,6 @@
 // Conexión con la base de datos de mysql por pool connection
 import { pool } from '../pconnection.js'
+import { errorLogs } from '../services/errorlogs.js'
 
 export class postModel {
   static async getAll ({ slug, categoria }) {
@@ -35,7 +36,9 @@ export class postModel {
 
       return posts
     } catch (error) {
-      console.error('Error en la consulta.', error)
+      if (error instanceof Error) { // Hacemos que error sea un objeto de Error para acceder a los datos del error más fácilmente
+        errorLogs(error.stack) // Stack devuelve el mensaje de los errores y las localizaciones
+      }
     }
   }
 
@@ -49,7 +52,9 @@ export class postModel {
 
       return post
     } catch (error) {
-      console.error('Error en la consulta.', error)
+      if (error instanceof Error) {
+        errorLogs(error.stack)
+      }
     }
   }
 
@@ -63,7 +68,9 @@ export class postModel {
         return post
       }
     } catch (error) {
-      console.error('Error en la consulta.', error)
+      if (error instanceof Error) {
+        errorLogs(error.stack)
+      }
     }
   }
 
@@ -81,7 +88,9 @@ export class postModel {
         return result
       }
     } catch (error) {
-      console.error('Error en la consulta.', error)
+      if (error instanceof Error) {
+        errorLogs(error.stack)
+      }
     }
   }
 
@@ -105,7 +114,9 @@ export class postModel {
         return result
       }
     } catch (error) {
-      console.error('Error en la consulta.', error)
+      if (error instanceof Error) {
+        errorLogs(error.stack)
+      }
     }
   }
 
@@ -117,7 +128,9 @@ export class postModel {
         return result
       }
     } catch (error) {
-      console.error('Error en la consulta.', error)
+      if (error instanceof Error) {
+        errorLogs(error.stack)
+      }
     }
   }
 }
