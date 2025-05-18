@@ -188,3 +188,11 @@ DELETE http://localhost:3000/categories
 {
   "ids": ""
 }
+
+### GOOGLE GEMINI
+POST http://localhost:3000/ai
+Content-Type: application/json
+
+{
+  "query": "Dame ideas para entradas de blog sobre veterinaria"
+}
