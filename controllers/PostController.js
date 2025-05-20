@@ -11,14 +11,25 @@ export class PostController {
   }
 
   getAll = async (req, res) => {
-    const { slug, categoria } = req.query
-    const posts = await this.postModel.getAll({ slug, categoria })
+    const { limit, categoria } = req.query
+    const posts = await this.postModel.getAll({ limit, categoria })
     res.json({ message: 'Posts encontrados.', data: posts })
   }
 
   getById = async (req, res) => {
     const { id } = req.params
     const post = await this.postModel.getById({ id })
+    if (post) {
+      return res.json({ message: 'Post encontrado.', data: post })
+    } else {
+      return res.status(404).json({ error: 'Post no encontrado.' })
+    }
+  }
+
+  getBySlug = async (req, res) => {
+    const { slug } = req.params
+    const post = await this.postModel.getBySlug({ slug })
+
     if (post) {
       return res.json({ message: 'Post encontrado.', data: post })
     } else {

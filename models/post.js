@@ -3,11 +3,16 @@ import { pool } from '../pconnection.js'
 import { errorLogs } from '../services/errorlogs.js'
 
 export class postModel {
-  static async getAll ({ slug, categoria }) {
+  static async getAll ({ categoria, limit }) {
     try {
-      if (slug) {
+      if (categoria) {
         const [posts] = await pool.execute(
-          'SELECT * FROM posts WHERE slug = ?;', [slug]
+          `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
+                  posts.metadescription, posts.keywords, posts.created_at, posts.updated_at
+          FROM posts
+          INNER JOIN categories
+          ON posts.categoria = categories.id
+          WHERE categoria = ?;`, [categoria]
         )
 
         // Si no encuentra registros en la base de datos
@@ -16,9 +21,15 @@ export class postModel {
         return posts
       }
 
-      if (categoria) {
+      if (limit) {
         const [posts] = await pool.execute(
-          'SELECT * FROM posts WHERE categoria = ?;', [categoria]
+          `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
+                  posts.metadescription, posts.keywords, posts.created_at, posts.updated_at
+          FROM posts
+          INNER JOIN categories
+          ON posts.categoria = categories.id
+          ORDER BY created_at DESC
+          LIMIT ?;`, [limit]
         )
 
         // Si no encuentra registros en la base de datos
@@ -28,7 +39,11 @@ export class postModel {
       }
 
       const [posts] = await pool.query(
-        'SELECT * FROM posts;'
+        `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
+                posts.metadescription, posts.keywords, posts.created_at, posts.updated_at
+         FROM posts
+         INNER JOIN categories
+         ON posts.categoria = categories.id`
       )
 
       // Si no encuentra registros en la base de datos
@@ -46,6 +61,27 @@ export class postModel {
     try {
       const [post] = await pool.execute(
         'SELECT * FROM posts WHERE id = ?;', [id]
+      )
+
+      if (post.length === 0) return null
+
+      return post
+    } catch (error) {
+      if (error instanceof Error) {
+        errorLogs(error.stack)
+      }
+    }
+  }
+
+  static async getBySlug ({ slug }) {
+    try {
+      const [post] = await pool.execute(
+        `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
+                posts.metadescription, posts.keywords, posts.created_at, posts.updated_at
+        FROM posts
+        INNER JOIN categories
+        ON posts.categoria = categories.id
+        WHERE slug = ?;`, [slug]
       )
 
       if (post.length === 0) return null

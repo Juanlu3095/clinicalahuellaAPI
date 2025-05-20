@@ -10,6 +10,8 @@ export const createPostRouter = ({ PostModel }) => {
 
   postRouter.get('/:id', postController.getById)
 
+  postRouter.get('/slug/:slug', postController.getBySlug)
+
   postRouter.post('/', postController.create)
 
   postRouter.patch('/:id', postController.patch)
