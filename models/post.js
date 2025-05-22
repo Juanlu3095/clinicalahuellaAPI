@@ -3,48 +3,33 @@ import { pool } from '../pconnection.js'
 import { errorLogs } from '../services/errorlogs.js'
 
 export class postModel {
-  static async getAll ({ categoria, limit }) {
+  static async getAll ({ categoria, estado, limit }) {
     try {
+      let query = `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
+                   metadescription, keywords, estado, posts.created_at, posts.updated_at
+                   FROM posts
+                   INNER JOIN categories
+                   ON posts.categoria = categories.id
+                   WHERE 1=1` // Esto para poder añadir los AND sin preocuparse por cuál debe poner WHERE
+      const values = [] // En este array incluimos los parámetros que se van necesitando en la consulta dependiendo de si se pasan o no
       if (categoria) {
-        const [posts] = await pool.execute(
-          `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
-                  posts.metadescription, posts.keywords, posts.created_at, posts.updated_at
-          FROM posts
-          INNER JOIN categories
-          ON posts.categoria = categories.id
-          WHERE categoria = ?;`, [categoria]
-        )
-
-        // Si no encuentra registros en la base de datos
-        if (posts.length === 0) return []
-
-        return posts
+        query += ' AND categoria = ?'
+        values.push(categoria)
       }
+
+      if (estado) {
+        query += ' AND estado = ?'
+        values.push(estado)
+      }
+
+      query += ' ORDER BY created_at DESC'
 
       if (limit) {
-        const [posts] = await pool.execute(
-          `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
-                  posts.metadescription, posts.keywords, posts.created_at, posts.updated_at
-          FROM posts
-          INNER JOIN categories
-          ON posts.categoria = categories.id
-          ORDER BY created_at DESC
-          LIMIT ?;`, [limit]
-        )
-
-        // Si no encuentra registros en la base de datos
-        if (posts.length === 0) return []
-
-        return posts
+        query += ' LIMIT ?'
+        values.push(parseInt(limit)) // ¡LOS DATOS QUE VIENEN EN REQ.QUERY SON STRINGS!
       }
 
-      const [posts] = await pool.query(
-        `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
-                posts.metadescription, posts.keywords, posts.created_at, posts.updated_at
-         FROM posts
-         INNER JOIN categories
-         ON posts.categoria = categories.id`
-      )
+      const [posts] = await pool.query(query, values)
 
       // Si no encuentra registros en la base de datos
       if (posts.length === 0) return []
@@ -73,15 +58,16 @@ export class postModel {
     }
   }
 
+  // Esta función es solo para el cliente, por eso el estado debe ser 'publicado'
   static async getBySlug ({ slug }) {
     try {
       const [post] = await pool.execute(
         `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
-                posts.metadescription, posts.keywords, posts.created_at, posts.updated_at
+                metadescription, keywords, estado, posts.created_at, posts.updated_at
         FROM posts
         INNER JOIN categories
         ON posts.categoria = categories.id
-        WHERE slug = ?;`, [slug]
+        WHERE slug = ? AND estado = 'publicado';`, [slug]
       )
 
       if (post.length === 0) return null
@@ -95,11 +81,11 @@ export class postModel {
   }
 
   static async create ({ input }) {
-    const { slug, titulo, contenido, categoria, imagen } = input
+    const { slug, titulo, contenido, categoria, imagen, metadescripcion, keywords, estado } = input
     try {
       const [post] = await pool.execute(
-        'INSERT INTO posts (slug, titulo, contenido, categoria, imagen) VALUES (?, ?, ?, ?, ?);',
-        [slug, titulo, contenido, categoria, imagen])
+        'INSERT INTO posts (slug, titulo, contenido, categoria, imagen, metadescription, keywords, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
+        [slug, titulo, contenido, categoria, imagen, metadescripcion, keywords, estado]) // REVISAR QUE metadescripcion se llame asi en el form de Angular
       if (post.affectedRows > 0) {
         return post
       }
@@ -111,13 +97,13 @@ export class postModel {
   }
 
   static async update ({ id, input }) {
-    const { slug, tituto, contenido, categoria, imagen } = input
+    const { slug, tituto, contenido, categoria, imagen, metadescripcion, keywords, estado } = input
     const today = new Date() // Obtenemos la fecha de hoy
     const date = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace('T', ' ') // Obtenemos la fecha en nuestra timezone en ISO
 
     try {
-      const query = 'UPDATE posts SET slug = ?, titulo = ?, contenido = ?, categoria = ?, imagen = ?, updated_at = ? WHERE id = ?'
-      const values = [slug, tituto, contenido, categoria, imagen, date, id]
+      const query = 'UPDATE posts SET slug = ?, titulo = ?, contenido = ?, categoria = ?, imagen = ?, metadescription = ?, keywords = ?, estado = ?, updated_at = ? WHERE id = ?'
+      const values = [slug, tituto, contenido, categoria, imagen, metadescripcion, keywords, estado, date, id]
 
       const [result] = await pool.execute(query, values)
       if (result.affectedRows > 0) {

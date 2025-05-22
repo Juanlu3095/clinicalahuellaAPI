@@ -11,8 +11,8 @@ export class PostController {
   }
 
   getAll = async (req, res) => {
-    const { limit, categoria } = req.query
-    const posts = await this.postModel.getAll({ limit, categoria })
+    const { categoria, estado, limit } = req.query
+    const posts = await this.postModel.getAll({ categoria, estado, limit })
     res.json({ message: 'Posts encontrados.', data: posts })
   }
 
