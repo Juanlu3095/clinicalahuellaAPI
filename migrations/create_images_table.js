@@ -9,7 +9,7 @@ export class ImageMigration {
   async createImages () {
     const connection = await mysql.createConnection(this.configuracion)
     try {
-      const structure = `id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, nombre VARCHAR(100) NOT NULL, alt VARCHAR(100) NOT NULL, image_url VARCHAR(100) NOT NULL,
+      const structure = `id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, nombre VARCHAR(100) NOT NULL, image_url VARCHAR(100) NOT NULL,
                          created_at TIMESTAMP DEFAULT(NOW()) NOT NULL, updated_at TIMESTAMP DEFAULT(CURRENT_TIMESTAMP) NOT NULL`
       const [db] = await connection.query(
         `CREATE TABLE IF NOT EXISTS images (${structure});`
