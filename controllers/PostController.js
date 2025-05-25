@@ -1,5 +1,4 @@
 import { validatePartialPost } from '../schemas/PostSchema.js'
-import { storeImage } from '../services/FileService.js'
 
 /**
  * It allows to use a model for this controller
@@ -39,17 +38,9 @@ export class PostController {
   }
 
   create = async (req, res) => {
-    const input = validatePartialPost(req.body) // Valida los datos que nos llegan. Si no se llaman igual que lo que contiene el schema, no entra en el schema para validar
+    const input = validatePartialPost(req.body)
     if (!input.success) {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
-    }
-
-    if (input.data.imagen != null) {
-      const fileStoreId = await storeImage(req.body.imagen) // Contiene la id de la imagen en la BD
-
-      if (fileStoreId) {
-        input.data.imagen = fileStoreId
-      }
     }
 
     const post = await this.postModel.create({ input: input.data })

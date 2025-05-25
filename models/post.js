@@ -4,14 +4,12 @@ import { errorLogs } from '../services/errorlogs.js'
 
 export class postModel {
   static async getAll ({ categoria, estado, limit }) {
-    try { // ERROR: No se muestran los posts sin categoria aunque no pidamos un estado concreto!!! => LEFT JOIN
-      let query = `SELECT posts.id, slug, titulo, contenido, images.nombre as imagen, categoria as categoria_id, categories.nombre as categoria,
+    try {
+      let query = `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
                    metadescription, keywords, estado, posts.created_at, posts.updated_at
                    FROM posts
-                   LEFT JOIN categories
+                   INNER JOIN categories
                    ON posts.categoria = categories.id
-                   LEFT JOIN images
-                   ON posts.imagen = images.id
                    WHERE 1=1` // Esto para poder añadir los AND sin preocuparse por cuál debe poner WHERE
       const values = [] // En este array incluimos los parámetros que se van necesitando en la consulta dependiendo de si se pasan o no
       if (categoria) {
@@ -64,13 +62,11 @@ export class postModel {
   static async getBySlug ({ slug }) {
     try {
       const [post] = await pool.execute(
-        `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria, images.nombre as imagen,
+        `SELECT posts.id, slug, titulo, contenido, categoria as categoria_id, categories.nombre as categoria,
                 metadescription, keywords, estado, posts.created_at, posts.updated_at
         FROM posts
-        LEFT JOIN categories
+        INNER JOIN categories
         ON posts.categoria = categories.id
-        LEFT JOIN images
-        ON posts.imagen = images.id
         WHERE slug = ? AND estado = 'publicado';`, [slug]
       )
 
@@ -85,11 +81,11 @@ export class postModel {
   }
 
   static async create ({ input }) {
-    const { slug, titulo, contenido, imagen, categoriaId, metadescripcion, keywords, estado } = input
+    const { slug, titulo, contenido, categoria, imagen, metadescripcion, keywords, estado } = input
     try {
       const [post] = await pool.execute(
         'INSERT INTO posts (slug, titulo, contenido, categoria, imagen, metadescription, keywords, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
-        [slug, titulo, contenido, categoriaId, imagen, metadescripcion, keywords, estado])
+        [slug, titulo, contenido, categoria, imagen, metadescripcion, keywords, estado]) // REVISAR QUE metadescripcion se llame asi en el form de Angular
       if (post.affectedRows > 0) {
         return post
       }
