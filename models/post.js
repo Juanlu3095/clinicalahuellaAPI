@@ -159,4 +159,19 @@ export class postModel {
       }
     }
   }
+
+  static async deleteSelection ({ ids }) {
+    try {
+      const query = 'DELETE FROM posts WHERE id IN (?)'
+      const [result] = await pool.query(query, [ids])
+
+      if (result.affectedRows > 0) {
+        return result
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        errorLogs(error.stack)
+      }
+    }
+  }
 }

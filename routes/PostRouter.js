@@ -18,5 +18,7 @@ export const createPostRouter = ({ PostModel }) => {
 
   postRouter.delete('/:id', postController.delete)
 
+  postRouter.delete('/', postController.deleteSelection)
+
   return postRouter
 }

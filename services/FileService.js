@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'fs/promises'
+import { mkdir, unlink, writeFile } from 'fs/promises'
 import { errorLogs } from './errorlogs.js'
 import { imageModel } from '../models/image.js'
 import { existsSync } from 'fs'
@@ -49,6 +49,24 @@ export const storeImage = async (image) => {
 
     if (imageId) return imageId
     return null
+  } catch (error) {
+    if (error instanceof Error) {
+      errorLogs(error)
+    }
+  }
+}
+
+/**
+ * Deletes an image from database and storage
+ * @param {number} id Image's id in database
+ */
+export const deleteImage = async ({ id }) => {
+  const image = await imageModel.getById({ id }) // Obtenemos los datos de la imagen
+  const nombreArchivo = image[0].nombre // Obtenemos el nombre de la imagen
+
+  try {
+    await unlink(`./storage/images/${nombreArchivo}`) // Elimina el archivo en storage
+    await imageModel.delete({ id }) // Elimina la imagen de la base de datos
   } catch (error) {
     if (error instanceof Error) {
       errorLogs(error)

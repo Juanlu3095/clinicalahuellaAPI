@@ -12,7 +12,11 @@ export class CategoryController {
 
   getAll = async (req, res) => {
     const categories = await this.categoryModel.getAll()
-    res.json({ message: 'Categorías encontradas.', data: categories })
+    if (categories.length > 0) {
+      res.json({ message: 'Categorías encontradas.', data: categories })
+    } else {
+      res.status(404).json({ error: 'Categorías no encontradas.' })
+    }
   }
 
   getById = async (req, res) => {

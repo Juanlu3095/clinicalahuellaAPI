@@ -12,7 +12,7 @@ export class MessageController {
 
   getAll = async (req, res) => {
     const messages = await this.messageModel.getAll()
-    if (messages) {
+    if (messages.length > 0) {
       res.json({ message: 'Mensajes encontrados.', data: messages })
     } else {
       res.status(404).json({ error: 'Mensajes no encontrados' })

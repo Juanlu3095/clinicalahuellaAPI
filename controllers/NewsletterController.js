@@ -12,7 +12,11 @@ export class NewsletterController {
 
   getAll = async (req, res) => {
     const newsletters = await this.newsletterModel.getAll()
-    res.json({ message: 'Newsletters encontradas.', data: newsletters })
+    if (newsletters.length > 0) {
+      res.json({ message: 'Newsletters encontradas.', data: newsletters })
+    } else {
+      res.status(404).json({ error: 'Newsletters no encontradas.' })
+    }
   }
 
   getById = async (req, res) => {

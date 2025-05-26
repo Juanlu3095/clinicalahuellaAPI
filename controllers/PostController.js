@@ -1,5 +1,5 @@
 import { validatePartialPost } from '../schemas/PostSchema.js'
-import { storeImage } from '../services/FileService.js'
+import { deleteImage, storeImage } from '../services/FileService.js'
 
 /**
  * It allows to use a model for this controller
@@ -14,7 +14,11 @@ export class PostController {
   getAll = async (req, res) => {
     const { categoria, estado, limit } = req.query
     const posts = await this.postModel.getAll({ categoria, estado, limit })
-    res.json({ message: 'Posts encontrados.', data: posts })
+    if (posts.length > 0) {
+      res.json({ message: 'Posts encontrados.', data: posts })
+    } else {
+      res.status(404).json({ error: 'Posts no encontrados encontrados.' })
+    }
   }
 
   getById = async (req, res) => {
@@ -79,12 +83,37 @@ export class PostController {
 
   delete = async (req, res) => {
     const { id } = req.params
-    const post = await this.postModel.delete({ id })
+    const post = await this.postModel.getById({ id })
 
-    if (post) {
-      res.json({ mesage: 'Post eliminado.', data: post })
+    // Eliminar imagen (archivo + row en BD) si el post tiene asignado una imagen
+    if (post[0].imagen != null) {
+      await deleteImage({ id: post[0].imagen })
+    }
+
+    const query = await this.postModel.delete({ id })
+
+    if (query) {
+      res.json({ mesage: 'Post eliminado.' })
     } else {
       return res.status(404).json({ error: 'Post no encontrado.' })
+    }
+  }
+
+  deleteSelection = async (req, res) => {
+    const { ids } = req.body
+
+    // Usamos await Promise.all() para que se ejecute todo esto antes de la siguiente línea
+    await Promise.all(ids.map(async (id) => {
+      const post = await this.postModel.getById({ id })
+      await deleteImage({ id: post[0].imagen })
+    }))
+
+    const query = await this.postModel.deleteSelection({ ids })
+
+    if (query) {
+      res.json({ mesage: 'Posts eliminados.' })
+    } else {
+      return res.status(404).json({ error: 'Posts no encontrados.' })
     }
   }
 }
