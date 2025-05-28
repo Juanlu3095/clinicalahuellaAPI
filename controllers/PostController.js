@@ -25,7 +25,7 @@ export class PostController {
     const { id } = req.params
     const post = await this.postModel.getById({ id })
     if (post) {
-      return res.json({ message: 'Post encontrado.', data: post })
+      return res.json({ message: 'Post encontrado.', data: post }) // Usar resource para ocultar imagenId en client ?
     } else {
       return res.status(404).json({ error: 'Post no encontrado.' })
     }
@@ -48,18 +48,22 @@ export class PostController {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
+    // Gestión del archivo
     if (input.data.imagen != null) {
       const fileStoreId = await storeImage(req.body.imagen) // Contiene la id de la imagen en la BD
 
       if (fileStoreId) {
-        input.data.imagen = fileStoreId
+        input.data.imagenId = fileStoreId
       }
+    } else {
+      input.data.imagenId = null
     }
+    delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
 
     const post = await this.postModel.create({ input: input.data })
 
     if (post) {
-      res.status(201).json({ message: 'Post creado.' })
+      res.status(201).json({ message: 'Post creado.', data: post.insertId }) // Devolvemos la id del post creado
     } else {
       return res.status(500).json({ error: 'Post no creado.' })
     }
@@ -72,6 +76,21 @@ export class PostController {
     if (!input.success) {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
+
+    // Gestión del archivo
+    if (input.data.imagen != null) {
+      const fileStoreId = await storeImage(req.body.imagen) // Contiene la id de la imagen en la BD
+      const postOld = await this.postModel.getById({ id }) // Obtenemos el post para luego obtener la id de la imagen
+
+      if (postOld[0].imagenId) {
+        await deleteImage({ id: postOld[0].imagenId }) // Eliminamos la imagen del storage y de la base de datos
+      }
+
+      if (fileStoreId) {
+        input.data.imagenId = fileStoreId
+      }
+    }
+    delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
 
     const post = await this.postModel.patch({ id, input: input.data })
     if (post) {
@@ -86,8 +105,8 @@ export class PostController {
     const post = await this.postModel.getById({ id })
 
     // Eliminar imagen (archivo + row en BD) si el post tiene asignado una imagen
-    if (post[0].imagen != null) {
-      await deleteImage({ id: post[0].imagen })
+    if (post[0].imagen) {
+      await deleteImage({ id: post[0].imagenId })
     }
 
     const query = await this.postModel.delete({ id })
@@ -104,8 +123,10 @@ export class PostController {
 
     // Usamos await Promise.all() para que se ejecute todo esto antes de la siguiente línea
     await Promise.all(ids.map(async (id) => {
-      const post = await this.postModel.getById({ id })
-      await deleteImage({ id: post[0].imagen })
+      const post = await this.postModel.getById({ id }) // Obtenemos todos los datos del post para luego usar la id de la imagen para borrarla
+      if (post[0].imagenId) { // Comprobamos si el post tiene imagen, ya que la imagen puede ser null y dar un error
+        await deleteImage({ id: post[0].imagenId })
+      }
     }))
 
     const query = await this.postModel.deleteSelection({ ids })

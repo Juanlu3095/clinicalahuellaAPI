@@ -24,9 +24,9 @@ export class imageModel {
       const [image] = await pool.execute('INSERT INTO images (nombre, image_url) VALUES (?, ?);',
         [nombre, url]) // REVISAR QUE metadescripcion se llame asi en el form de Angular
       if (image.affectedRows > 0) {
-        const [lastIdResult] = await pool.query('SELECT LAST_INSERT_ID() lastId')
+        const [lastIdResult] = await pool.query('SELECT LAST_INSERT_ID() lastId') // Obtenemos la id creada con la consulta anterior
         const [{ lastId }] = lastIdResult
-        return lastId
+        return lastId // Devolvemos la id de la imagen creada para después usarla para guardarla en el campo imagen de post
       }
     } catch (error) {
       if (error instanceof Error) {

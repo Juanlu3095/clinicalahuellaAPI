@@ -6,6 +6,7 @@ const Post = z.object({
   contenido: z.string({ required_error: 'El campo contenido es requerido.', invalid_type_error: 'El campo contenido debe ser un texto.' }),
   categoriaId: z.number({ required_error: 'El campo categoria es requerido.', invalid_type_error: 'El campo categoria debe ser un número.' }).int({ message: 'El campo categoria debe ser un entero.' }).nullable(),
   imagen: z.string({ required_error: 'El campo imagen es requerido.', invalid_type_error: 'El campo imagen debe ser un string.' }).nullable(),
+  imagenId: z.number({ required_error: 'El campo imagenId es requerido.', invalid_type_error: 'El campo imagenId debe ser un número.' }).int({ message: 'El campo imagenId debe ser un entero.' }).nullable(),
   metadescripcion: z.string({ required_error: 'El campo metadescripcion es requerido.', invalid_type_error: 'El campo metadescripcion debe ser un string.' }),
   keywords: z.string({ required_error: 'El campo keywords es requerido.', invalid_type_error: 'El campo keywords debe ser un string.' }),
   estado: z.enum(['borrador', 'publicado'])
