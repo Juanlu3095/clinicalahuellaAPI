@@ -17,7 +17,7 @@ export class PostController {
     if (posts.length > 0) {
       res.json({ message: 'Posts encontrados.', data: posts })
     } else {
-      res.status(404).json({ error: 'Posts no encontrados encontrados.' })
+      res.status(404).json({ error: 'Posts no encontrados.' })
     }
   }
 
@@ -63,7 +63,7 @@ export class PostController {
     const post = await this.postModel.create({ input: input.data })
 
     if (post) {
-      res.status(201).json({ message: 'Post creado.', data: post.insertId }) // Devolvemos la id del post creado
+      res.status(201).json({ message: 'Post creado.', data: post.insertId }) // Devolvemos la id del post creado, insertId lo devuelve la respuesta de mysql, como affectedRows
     } else {
       return res.status(500).json({ error: 'Post no creado.' })
     }
@@ -94,7 +94,7 @@ export class PostController {
 
     const post = await this.postModel.patch({ id, input: input.data })
     if (post) {
-      res.json({ message: 'Post actualizado.', data: post })
+      res.json({ message: 'Post actualizado.' })
     } else {
       return res.status(404).json({ error: 'Post no encontrado.' })
     }

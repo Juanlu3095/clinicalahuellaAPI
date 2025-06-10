@@ -117,7 +117,7 @@ GET http://localhost:3000/posts
 Origin: http://localhost:4200
 
 ### Recuperar todas los posts filtrando por slug
-GET http://localhost:3000/posts/slug/5-consejos-para-cuidadoress
+GET http://localhost:3000/posts/slug/5-consejos-para-cuidadores
 Origin: http://localhost:4200
 
 ### Recuperar todas los posts filtrando por categoria
@@ -126,6 +126,10 @@ Origin: http://localhost:4200
 
 ### Recuperar todas los posts filtrando por estado de publicación
 GET http://localhost:3000/posts?estado=borrador
+Origin: http://localhost:4200
+
+### Recuperar todas los posts filtrando por estado de publicación y límite de posts 1
+GET http://localhost:3000/posts?estado=publicado&limit=1
 Origin: http://localhost:4200
 
 ### Recuperar todas los posts filtrando con limit
