@@ -69,4 +69,15 @@ export class BookingController {
       return res.status(404).json({ error: 'Reserva no encontrada.' })
     }
   }
+
+  deleteSelection = async (req, res) => {
+    const { ids } = req.body
+    const query = await this.bookingModel.deleteSelection({ ids })
+
+    if (query) {
+      res.json({ message: 'Reservas eliminadas.' })
+    } else {
+      return res.status(404).json({ error: 'Reservas no encontradas.' })
+    }
+  }
 }

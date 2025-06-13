@@ -16,5 +16,7 @@ export const createBookingRouter = ({ BookingModel }) => {
 
   bookingRouter.delete('/:id', bookingController.delete)
 
+  bookingRouter.delete('/', bookingController.deleteSelection)
+
   return bookingRouter
 }

@@ -82,4 +82,17 @@ export class bookingModel {
       console.error('Error en la consulta.', error)
     }
   }
+
+  static async deleteSelection ({ ids }) {
+    try {
+      const query = 'DELETE FROM bookings WHERE HEX(id) IN (?)'
+      const [result] = await pool.query(query, [ids])
+
+      if (result.affectedRows > 0) {
+        return result
+      }
+    } catch (error) {
+      console.error('Error en la consulta: ', error)
+    }
+  }
 }
