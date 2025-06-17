@@ -31,7 +31,7 @@ export class AppointmentController {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
-    const appointment = await this.appointmentModel.create({ input: input.data })
+    const appointment = await this.appointmentModel.create({ input: input.data }) // Contiene la id de la nueva cita para pasarla al calendario
 
     if (appointment) {
       res.status(201).json({ message: 'Cita creada.' })
