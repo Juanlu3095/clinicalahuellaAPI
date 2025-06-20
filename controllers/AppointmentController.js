@@ -1,4 +1,5 @@
 import { validateAppointment, validatePartialAppointment } from '../schemas/AppointmentSchema.js'
+import { sendEmailAppointment } from '../services/EmailService.js'
 
 /**
  * It allows to use a model for this controller
@@ -34,6 +35,7 @@ export class AppointmentController {
     const appointment = await this.appointmentModel.create({ input: input.data }) // Contiene la id de la nueva cita para pasarla al calendario
 
     if (appointment) {
+      sendEmailAppointment(input.data) // Enviamos el email
       res.status(201).json({ message: 'Cita creada.' })
     } else {
       return res.status(404).json({ error: 'Cita no creada.' })

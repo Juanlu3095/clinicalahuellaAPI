@@ -75,6 +75,10 @@ Content-Type: application/json
 ### Eliminar mensaje
 DELETE http://localhost:3000/messages/6DD61604220411F0814AD8BBC1B70204
 
+### Recuperar todos los appointments
+GET http://localhost:3000/appointments
+Origin: http://localhost:4200
+
 ### Recuperar todas los bookings
 GET http://localhost:3000/bookings
 Origin: http://localhost:4200
