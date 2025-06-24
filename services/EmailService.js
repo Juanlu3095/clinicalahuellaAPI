@@ -22,8 +22,8 @@ const transporter = nodemailer.createTransport({
   auth: {
     type: 'OAuth2',
     user: MAIL,
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientId: CLIENT_ID,
+    clientSecret: CLIENT_SECRET,
     refreshToken: REFRESH_TOKEN,
     accessToken: token // Se necesita googleapi para obtener el accessToken
   }
@@ -40,7 +40,7 @@ export const sendEmailAppointment = async (data) => {
       from: '"Clínica veterinaria La Huella" <Clinica La Huella>',
       to: data.email,
       subject: 'Tu cita en La Huella',
-      html: `<h1>¡Hola, ${data.nombre} ${data.apellidos}!</h1>
+      html: `<h2>¡Hola, ${data.nombre} ${data.apellidos}!</h2>
              <p>Te escribimos para confirmarte tu cita en nuestra clínica veterinaria. Aquí te dejamos los datos:</p>
              <p><b>Nombre y apellidos</b>: ${data.nombre} ${data.apellidos}</p>
              <p><b>Fecha</b>: ${fecha}</p>

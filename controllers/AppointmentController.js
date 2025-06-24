@@ -38,7 +38,7 @@ export class AppointmentController {
       sendEmailAppointment(input.data) // Enviamos el email
       res.status(201).json({ message: 'Cita creada.' })
     } else {
-      return res.status(404).json({ error: 'Cita no creada.' })
+      return res.status(500).json({ error: 'Cita no creada.' })
     }
   }
 

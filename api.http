@@ -79,12 +79,16 @@ DELETE http://localhost:3000/messages/6DD61604220411F0814AD8BBC1B70204
 GET http://localhost:3000/appointments
 Origin: http://localhost:4200
 
+### Recuperar un appointment por id
+GET http://localhost:3000/appointments/190598454BA311F0A306D8BBC1B70204
+Origin: http://localhost:4200
+
 ### Recuperar todas los bookings
 GET http://localhost:3000/bookings
 Origin: http://localhost:4200
 
 ### Recuperar un booking por id
-GET http://localhost:3000/bookings/258ECCC8C7BA11EF893874563C06B87C
+GET http://localhost:3000/bookings/1C1E2A0D4D0311F08DAED8BBC1B70204
 Origin: http://localhost:4200
 
 ### Crear booking
