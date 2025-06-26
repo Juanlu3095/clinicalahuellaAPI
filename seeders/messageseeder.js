@@ -7,7 +7,7 @@ export class MessageSeeder {
 
   async createmessage () {
     const connection = await mysql.createConnection(this.configuracion)
-    const values = ['Pepe', 'López', 'pepe@gmail.com', 951248550, 'Pregunta cita', 'Hola, éste es un mensaje']
+    const values = ['Pepe', 'López', 'pepe@gmail.com', '951248550', 'Pregunta cita', 'Hola, éste es un mensaje']
 
     try {
       const [result] = await connection.execute(

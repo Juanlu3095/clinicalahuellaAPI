@@ -10,7 +10,7 @@ export class MessageMigration {
     const connection = await mysql.createConnection(this.configuracion)
     try {
       const structure = `id BINARY (16) PRIMARY KEY DEFAULT(UUID_TO_BIN(UUID())), nombre VARCHAR(100) NOT NULL, apellidos VARCHAR(100) NOT NULL, email VARCHAR(255) NOT NULL,
-                         telefono INT NOT NULL, asunto VARCHAR(255) NOT NULL, mensaje VARCHAR(255) NOT NULL, created_at TIMESTAMP DEFAULT(NOW()) NOT NULL,
+                         telefono VARCHAR(50) NOT NULL, asunto VARCHAR(255) NOT NULL, mensaje VARCHAR(255) NOT NULL, created_at TIMESTAMP DEFAULT(NOW()) NOT NULL,
                          updated_at TIMESTAMP DEFAULT(CURRENT_TIMESTAMP) NOT NULL`
       const [db] = await connection.query(
         `CREATE TABLE IF NOT EXISTS messages (${structure});`
