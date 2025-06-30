@@ -224,3 +224,13 @@ Content-Type: application/json
 {
   "query": "Dame ideas para entradas de blog sobre veterinaria"
 }
+
+### Prueba login
+POST http://localhost:3000/login
+Content-Type: application/json
+Origin: http://origin.es
+
+{
+  "email": "jcooldevelopment@gmail.com",
+  "password": "jacintoPerez50@2025."
+}

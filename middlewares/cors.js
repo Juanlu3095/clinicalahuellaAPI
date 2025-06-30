@@ -5,7 +5,8 @@ export const applycors = () =>
     origin: (origin, callback) => {
       const ACCEPTED_ORIGINS = [
         'http://localhost:4200',
-        'http://localhost:9876'
+        'http://localhost:9876',
+        'http://origin.es'
       ]
 
       if (ACCEPTED_ORIGINS.includes(origin)) {
@@ -20,5 +21,6 @@ export const applycors = () =>
       }
 
       return callback(new Error('Not allowed by CORS'))
-    }
+    },
+    credentials: true // para que el navegador acepte y guarde cookies enviadas por la api
   })

@@ -1,8 +1,9 @@
-import { BookingSeeder } from './bookingseeder.js'
+import { UserSeeder } from './userseeder.js'
+/* import { BookingSeeder } from './bookingseeder.js'
 import { MessageSeeder } from './messageseeder.js'
 import { NewsletterSeeder } from './newsletterseeder.js'
 import { CategorySeeder } from './categoryseeder.js'
-import { PostSeeder } from './postseeder.js'
+import { PostSeeder } from './postseeder.js' */
 import 'dotenv/config'
 
 const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE } = process.env
@@ -16,27 +17,29 @@ const config = {
 }
 
 // Instanciamos las clases para usarlas, inyectándoles config
-const newsletterSeeder = new NewsletterSeeder({ config })
+const userSeeder = new UserSeeder({ config })
+/* const newsletterSeeder = new NewsletterSeeder({ config })
 const messageSeeder = new MessageSeeder({ config })
 const bookingsSeeder = new BookingSeeder({ config })
 const categoriesSeeder = new CategorySeeder({ config })
-const postSeeder = new PostSeeder({ config })
+const postSeeder = new PostSeeder({ config }) */
 
 const seeders = async () => {
   const errors = []
 
-  const newsletters = await newsletterSeeder.createnewsletter().catch(e => errors.push(e))
+  const user = await userSeeder.createuser().catch(e => errors.push(e))
+  /* const newsletters = await newsletterSeeder.createnewsletter().catch(e => errors.push(e))
   const messages = await messageSeeder.createmessage().catch(e => errors.push(e))
   const bookings = await bookingsSeeder.createBooking().catch(e => errors.push(e))
   const categories = await categoriesSeeder.createcategory().catch(e => errors.push(e))
-  const posts = await postSeeder.createPost().catch(e => errors.push(e))
+  const posts = await postSeeder.createPost().catch(e => errors.push(e)) */
 
   if (errors.length > 0) {
     console.error('Error en la llamada de los seeders:', errors)
   }
 
   return [
-    newsletters, messages, bookings, categories, posts
+    user /*, newsletters, messages, bookings, categories, posts */
   ]
 }
 
