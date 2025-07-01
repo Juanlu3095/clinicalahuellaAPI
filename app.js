@@ -70,13 +70,13 @@ app.post('/login', async (req, res) => {
     secure: ENVIRONMENT === 'production', // La cookie sólo se puede acceder en HTTPS. Si ENVIRONMENT es 'production' sale true
     sameSite: 'none', // Sólo se puede acceder desde el mismo dominio ?
     maxAge: 1000 * 60 * 60 // Validez máxima de 1 hora de la cookie
-  }).json({ message: 'Usuario y contraseña correctos.' })
+  }).json({ message: 'Usuario y contraseña correctos.', data: `${user.nombre} ${user.apellidos}` })
 })
 
 // Permite comprobar que un usuario esté logueado o no
 app.get('/login', (req, res) => {
   const jwtToken = req.cookies._lh_tk
-
+  console.log('cookies: ', req.cookies)
   if (!jwtToken) {
     return res.status(401).json({ error: 'El usuario no está autenticado.' })
   }
