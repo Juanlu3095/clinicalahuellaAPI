@@ -20,6 +20,7 @@ import { userModel } from './models/user.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { validateLogin } from './schemas/LoginSchema.js'
+import { verifyCsrf } from './middlewares/csrf.js'
 
 const app = express()
 
@@ -49,6 +50,11 @@ app.use('/images', ImageRouter())
 app.post('/login', async (req, res) => {
   const validation = validateLogin(req.body)
   console.log('cookies: ', req.cookies)
+
+  if (!verifyCsrf(req.headers)) { // DE MOMENTO ASÍ, LUEGO LO USAREMOS CON APP.USE EN LAS RUTAS CUANDO ENCONTREMOS ALGUNA LIBRERÍA
+    return res.status(401).json({ error: 'Token CSRF no válido.' })
+  }
+
   if (!validation.success) {
     res.status(422).json({ error: JSON.parse(validation.error.message) })
   }
@@ -88,6 +94,19 @@ app.get('/login', (req, res) => {
   } catch (error) {
     return res.status(401).json({ error: 'El usuario no está autenticado o la sesión expiró.' })
   }
+})
+
+// Genera cookie CSRF para Angular
+app.get('/csrf', (req, res) => {
+  const csrf = 'tokenCsrfSuperSecreto'
+  const { ENVIRONMENT } = process.env
+
+  return res.cookie('_xsrf_token', csrf, {
+    httpOnly: false, // Para que Angular reciba el CSRF debe ser false
+    secure: ENVIRONMENT === 'production', // La cookie sólo se puede acceder en HTTPS. Si ENVIRONMENT es 'production' sale true
+    sameSite: 'none', // Sólo se puede acceder desde el mismo dominio ?
+    maxAge: 1000 * 60 * 60 // Validez máxima de 1 hora de la cookie
+  }).json({ message: 'Enviado nuevo csrf token' })
 })
 
 const PORT = process.env.PORT ?? 1234
