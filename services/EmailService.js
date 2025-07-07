@@ -9,25 +9,33 @@ const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN
 const REDIRECT_URL = 'https://developers.google.com/oauthplayground/'
 const MAIL = process.env.MAIL_AUTH_USER
 
-const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
+// Metemos todo en una función asíncrona con catch para que no detenga la API en caso de que caduque el refreshToken
+const createTransporter = async () => {
+  const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
 
-oauth2Client.setCredentials({
-  refresh_token: REFRESH_TOKEN
-})
+  oauth2Client.setCredentials({
+    refresh_token: REFRESH_TOKEN
+  })
 
-const { token } = await oauth2Client.getAccessToken()
+  const { token } = await oauth2Client.getAccessToken()
+    .catch((error) => {
+      console.error(error) // CAMBIAR ESTO POR ERRORLOGS
+    })
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    type: 'OAuth2',
-    user: MAIL,
-    clientId: CLIENT_ID,
-    clientSecret: CLIENT_SECRET,
-    refreshToken: REFRESH_TOKEN,
-    accessToken: token // Se necesita googleapi para obtener el accessToken
-  }
-})
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: MAIL,
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      refreshToken: REFRESH_TOKEN,
+      accessToken: token // Se necesita googleapi para obtener el accessToken
+    }
+  })
+
+  return transporter
+}
 
 /**
  * Allows to send and email to client when an appointment is created
@@ -36,7 +44,7 @@ const transporter = nodemailer.createTransport({
 export const sendEmailAppointment = async (data) => {
   const fecha = new Date(data.fecha).toLocaleDateString()
   try {
-    await transporter.sendMail({
+    await createTransporter.sendMail({
       from: '"Clínica veterinaria La Huella" <Clinica La Huella>',
       to: data.email,
       subject: 'Tu cita en La Huella',

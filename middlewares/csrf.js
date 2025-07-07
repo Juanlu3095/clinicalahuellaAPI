@@ -1,11 +1,22 @@
-export const generateCsrf = () => {
+import { doubleCsrf } from 'csrf-csrf'
+import 'dotenv/config'
+import crypto from 'node:crypto'
 
-}
+const id = crypto.randomBytes(32).toString('base64') // Se usará en caso de un usuario no autenticado
+const { CSRF_SECRET } = process.env
 
-export const verifyCsrf = (headers) => {
-  if (headers._xsrf_token) {
-    console.log('Éste es el CSRF: ', headers._xsrf_token)
-    return true
-  }
-  return false
-}
+export const {
+  generateCsrfToken, // Use this in your routes to provide a CSRF hash + token cookie and token.
+  doubleCsrfProtection // This is the default CSRF protection middleware.
+} = doubleCsrf({
+  cookieName: '_xsrf_token',
+  cookieOptions: {
+    secure: true,
+    sameSite: 'none',
+    httpOnly: false,
+    maxAge: 1000 * 60 * 60
+  },
+  getSecret: () => CSRF_SECRET,
+  getCsrfTokenFromRequest: (req) => req.headers._xsrf_token, // Indica de donde se obtiene el token para CSRF Protection
+  getSessionIdentifier: (req) => req.cookies._lh_tk ?? id // Se debe pasar el JWT para las sesiones
+})

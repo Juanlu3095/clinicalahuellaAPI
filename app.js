@@ -20,7 +20,7 @@ import { userModel } from './models/user.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { validateLogin } from './schemas/LoginSchema.js'
-import { verifyCsrf } from './middlewares/csrf.js'
+import { doubleCsrfProtection, generateCsrfToken } from './middlewares/csrf.js'
 
 const app = express()
 
@@ -34,6 +34,8 @@ app.use(cookieParser()) // Permite trabajar con cookies
 
 app.use(applycors())
 
+app.use(doubleCsrfProtection)
+
 /* Rutas */
 // Se usa app.use para que todas las peticiones a la url indicada pasen por el 'middleware' del 2º parámetro
 app.use('/newsletters', createNewsletterRouter({ NewsletterModel: newsletterModel }))
@@ -44,16 +46,13 @@ app.use('/posts', createPostRouter({ PostModel: postModel }))
 app.use('/categories', createCategoryRouter({ CategoryModel: categoryModel }))
 app.use('/ai', AiRouter())
 app.use('/images', ImageRouter())
+// app.use('/auth') // CREAR AQUÍ EL ROUTER PARA AUTHCONTROLLER
 
 // Usar un middleware .use para el router con login sólo, pasando el 2º parámetro. FALTA FUNCIÓN PARA VERIFICAR TOKEN
 // https://dev.to/adriangrahldev/implementacion-de-autenticacion-segura-en-nodejs-con-jwt-465o
 app.post('/login', async (req, res) => {
   const validation = validateLogin(req.body)
   console.log('cookies: ', req.cookies)
-
-  if (!verifyCsrf(req.headers)) { // DE MOMENTO ASÍ, LUEGO LO USAREMOS CON APP.USE EN LAS RUTAS CUANDO ENCONTREMOS ALGUNA LIBRERÍA
-    return res.status(401).json({ error: 'Token CSRF no válido.' })
-  }
 
   if (!validation.success) {
     res.status(422).json({ error: JSON.parse(validation.error.message) })
@@ -96,17 +95,26 @@ app.get('/login', (req, res) => {
   }
 })
 
-// Genera cookie CSRF para Angular
-app.get('/csrf', (req, res) => {
-  const csrf = 'tokenCsrfSuperSecreto'
-  const { ENVIRONMENT } = process.env
+app.post('/logout', (req, res) => {
+  const jwtToken = req.cookies._lh_tk
 
-  return res.cookie('_xsrf_token', csrf, {
-    httpOnly: false, // Para que Angular reciba el CSRF debe ser false
-    secure: ENVIRONMENT === 'production', // La cookie sólo se puede acceder en HTTPS. Si ENVIRONMENT es 'production' sale true
-    sameSite: 'none', // Sólo se puede acceder desde el mismo dominio ?
-    maxAge: 1000 * 60 * 60 // Validez máxima de 1 hora de la cookie
-  }).json({ message: 'Enviado nuevo csrf token' })
+  if (!jwtToken) {
+    return res.status(401).json({ error: 'El usuario no está autenticado.' })
+  }
+  const { JWT_SECRET } = process.env
+
+  try {
+    jwt.verify(jwtToken, JWT_SECRET)
+    return res.clearCookie('_lh_tk').send({ message: 'Cierre de sesión satisfactorio.' })
+  } catch (error) {
+    return res.status(401).json({ error: 'El usuario no está autenticado o la sesión expiró.' })
+  }
+})
+
+// Genera cookie CSRF para Angular. PARECE QUE SE TRAGA EL CSRF EN EL INICIO SESION PERO NO DESPUÉS
+app.get('/csrf', (req, res) => {
+  generateCsrfToken(req, res) // Crea y envia la cookie con el CSRF Token
+  res.json({ message: 'Enviado nuevo csrf token' })
 })
 
 const PORT = process.env.PORT ?? 1234
