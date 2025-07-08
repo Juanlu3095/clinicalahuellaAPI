@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { CategoryController } from '../controllers/CategoryController.js'
+import { verifyJwt } from '../middlewares/jwt.js'
 
 export const createCategoryRouter = ({ CategoryModel }) => {
   const categoryRouter = Router()
@@ -10,13 +11,13 @@ export const createCategoryRouter = ({ CategoryModel }) => {
 
   categoryRouter.get('/:id', categoryController.getById)
 
-  categoryRouter.post('/', categoryController.create)
+  categoryRouter.post('/', verifyJwt, categoryController.create)
 
-  categoryRouter.patch('/:id', categoryController.patch)
+  categoryRouter.patch('/:id', verifyJwt, categoryController.patch)
 
-  categoryRouter.delete('/:id', categoryController.delete)
+  categoryRouter.delete('/:id', verifyJwt, categoryController.delete)
 
-  categoryRouter.delete('/', categoryController.deleteSelection)
+  categoryRouter.delete('/', verifyJwt, categoryController.deleteSelection)
 
   return categoryRouter
 }

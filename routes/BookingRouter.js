@@ -1,22 +1,23 @@
 import { Router } from 'express'
 import { BookingController } from '../controllers/BookingController.js'
+import { verifyJwt } from '../middlewares/jwt.js'
 
 export const createBookingRouter = ({ BookingModel }) => {
   const bookingRouter = Router()
 
   const bookingController = new BookingController({ BookingModel })
 
-  bookingRouter.get('/', bookingController.getAll)
+  bookingRouter.get('/', verifyJwt, bookingController.getAll)
 
-  bookingRouter.get('/:id', bookingController.getById)
+  bookingRouter.get('/:id', verifyJwt, bookingController.getById)
 
   bookingRouter.post('/', bookingController.create)
 
-  bookingRouter.patch('/:id', bookingController.patch)
+  bookingRouter.patch('/:id', verifyJwt, bookingController.patch)
 
-  bookingRouter.delete('/:id', bookingController.delete)
+  bookingRouter.delete('/:id', verifyJwt, bookingController.delete)
 
-  bookingRouter.delete('/', bookingController.deleteSelection)
+  bookingRouter.delete('/', verifyJwt, bookingController.deleteSelection)
 
   return bookingRouter
 }

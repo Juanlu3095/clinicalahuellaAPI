@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { PostController } from '../controllers/PostController.js'
+import { verifyJwt } from '../middlewares/jwt.js'
 
 export const createPostRouter = ({ PostModel }) => {
   const postRouter = Router()
@@ -12,13 +13,13 @@ export const createPostRouter = ({ PostModel }) => {
 
   postRouter.get('/slug/:slug', postController.getBySlug)
 
-  postRouter.post('/', postController.create)
+  postRouter.post('/', verifyJwt, postController.create)
 
-  postRouter.patch('/:id', postController.patch)
+  postRouter.patch('/:id', verifyJwt, postController.patch)
 
-  postRouter.delete('/:id', postController.delete)
+  postRouter.delete('/:id', verifyJwt, postController.delete)
 
-  postRouter.delete('/', postController.deleteSelection)
+  postRouter.delete('/', verifyJwt, postController.deleteSelection)
 
   return postRouter
 }

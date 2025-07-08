@@ -1,20 +1,21 @@
 import { Router } from 'express'
 import { AppointmentController } from '../controllers/AppointmentController.js'
+import { verifyJwt } from '../middlewares/jwt.js'
 
 export const createAppointmentRouter = ({ AppointmentModel }) => {
   const appointmentRouter = Router()
 
   const appointmentController = new AppointmentController({ AppointmentModel })
 
-  appointmentRouter.get('/', appointmentController.getAll)
+  appointmentRouter.get('/', verifyJwt, appointmentController.getAll)
 
-  appointmentRouter.get('/:id', appointmentController.getById)
+  appointmentRouter.get('/:id', verifyJwt, appointmentController.getById)
 
-  appointmentRouter.post('/', appointmentController.create)
+  appointmentRouter.post('/', verifyJwt, appointmentController.create)
 
-  appointmentRouter.patch('/:id', appointmentController.patch)
+  appointmentRouter.patch('/:id', verifyJwt, appointmentController.patch)
 
-  appointmentRouter.delete('/:id', appointmentController.delete)
+  appointmentRouter.delete('/:id', verifyJwt, appointmentController.delete)
 
   return appointmentRouter
 }
