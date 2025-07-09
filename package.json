@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate:mysql": "node migrations/mysql.js",
-    "seed:mysql": "node seeders/mysqlseeder.js",
+    "migrate:mysql": "node database/migrations/mysql.js",
+    "seed:mysql": "node database/seeders/mysqlseeder.js",
     "dev": "node --watch app.js",
     "prod": "node app.js"
   },

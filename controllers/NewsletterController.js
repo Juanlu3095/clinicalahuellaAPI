@@ -1,4 +1,5 @@
 import { validateNewsletter } from '../schemas/NewsletterSchema.js'
+import { repeatedValues } from '../database/utilities/validations.js'
 
 /**
  * It allows to use a model for this controller
@@ -30,13 +31,16 @@ export class NewsletterController {
   }
 
   create = async (req, res) => {
-    // const input = { requestBody: req.body }
-    // res.json(input.requestBody)
     const input = validateNewsletter(req.body)
-    // const { email } = input
-    // res.json({ input })
+
     if (!input.success) {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
+    }
+
+    // Se comprueba que no haya otro email inscrito en la tabla
+    const sameEmail = await repeatedValues('newsletters', 'email', input.data.email)
+    if (sameEmail > 0) {
+      return res.status(409).json({ error: 'Newsletter ya existente.' }) // Conflicto con un email ya existente, por eso el 409
     }
 
     const newsletter = await this.newsletterModel.create({ input: input.data })
@@ -49,12 +53,20 @@ export class NewsletterController {
   }
 
   update = async (req, res) => {
-    // const { email } = req.body
     const input = validateNewsletter(req.body)
     const { id } = req.params
 
     if (!input.success) {
       return res.status(400).json({ error: JSON.parse(input.error.message) })
+    }
+
+    // Se comprueba que el email no se repita al editarlo
+    const repeatedEmail = await repeatedValues('newsletters', 'email', input.data.email)
+    const emailToEdit = await this.newsletterModel.getById({ id })
+    if (repeatedEmail > 1) { // Si hay más de uno repetido se devuelve 409
+      return res.status(409).json({ error: 'Newsletter ya existente.' }) // Conflicto con un email ya existente, distinto del que se quiere editar
+    } else if (repeatedEmail === 1 && emailToEdit.email !== input.data.email) {
+      return res.status(409).json({ error: 'Newsletter ya existente.' }) // El conflicto podría ser con otro email existente o con el que se 'edita' pero no se cambia realmente por el usuario
     }
 
     const newsletter = await this.newsletterModel.update({ id, input: input.data }) // Al pasar la validacion el email está en input.data

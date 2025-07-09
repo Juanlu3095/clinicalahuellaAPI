@@ -1,3 +1,4 @@
+import { repeatedValues } from '../database/utilities/validations.js'
 import { validatePartialPost } from '../schemas/PostSchema.js'
 import { deleteImage, storeImage } from '../services/FileService.js'
 
@@ -48,6 +49,9 @@ export class PostController {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
+    const repeatedSlug = repeatedValues('posts', 'slug', input.data.slug)
+    if (repeatedSlug > 0) return res.status(409).json({ error: 'Slug ya existente.' })
+
     // Gestión del archivo
     if (input.data.imagen != null) {
       const fileStoreId = await storeImage(req.body.imagen) // Contiene la id de la imagen en la BD
@@ -75,6 +79,15 @@ export class PostController {
 
     if (!input.success) {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
+    }
+
+    // Se comprueba que el slug no exista en los posts
+    const postToEdit = await this.postModel.getById({ id }) // Se recupera el post a editar
+    const repeatedSlug = await repeatedValues('posts', 'slug', input.data.slug) // Se obtiene el número de posts con el slug indicado
+    if (repeatedSlug > 1) { // Si hay más de 1 post con el slug indicado se devuelve un 409
+      return res.status(409).json({ error: 'Slug ya existente.' })
+    } else if (repeatedSlug === 1 && postToEdit[0].slug !== input.data.slug) { // Si hay uno repetido, puede ser el que se edita (que tiene el mismo slug porque no cambia) o puede ser el de otro post distinto
+      return res.status(409).json({ error: 'Slug ya existente.' })
     }
 
     // Gestión del archivo
