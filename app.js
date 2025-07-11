@@ -10,6 +10,7 @@ import { createCategoryRouter } from './routes/CategoriesRouter.js'
 import { newsletterModel } from './models/newsletter.js'
 import { AiRouter } from './routes/AiRouter.js'
 import { ImageRouter } from './routes/ImagesRouter.js'
+import { AnalyticsRouter } from './routes/AnalyticsRouter.js'
 import { AuthRouter } from './routes/AuthRouter.js'
 import { CsrfRouter } from './routes/CsrfRouter.js'
 import { messageModel } from './models/message.js'
@@ -44,6 +45,7 @@ app.use('/posts', createPostRouter({ PostModel: postModel }))
 app.use('/categories', createCategoryRouter({ CategoryModel: categoryModel }))
 app.use('/ai', AiRouter())
 app.use('/images', ImageRouter())
+app.use('/analytics', AnalyticsRouter())
 app.use('/auth', AuthRouter({ UserModel: userModel }))
 app.use('/csrf', CsrfRouter())
 

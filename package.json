@@ -33,6 +33,7 @@
     "source.fixAll.eslint": "true"
   },
   "dependencies": {
+    "@google-analytics/data": "5.1.0",
     "@google/genai": "^0.14.1",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
