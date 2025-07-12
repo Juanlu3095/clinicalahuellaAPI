@@ -2,10 +2,10 @@ import { Router } from 'express'
 import { PostController } from '../controllers/PostController.js'
 import { verifyJwt } from '../middlewares/jwt.js'
 
-export const createPostRouter = ({ PostModel }) => {
+export const createPostRouter = ({ PostModel, ImageModel }) => {
   const postRouter = Router()
 
-  const postController = new PostController({ PostModel })
+  const postController = new PostController({ PostModel, ImageModel })
 
   postRouter.get('/', postController.getAll)
 

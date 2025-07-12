@@ -1,15 +1,17 @@
 import { repeatedValues } from '../database/utilities/validations.js'
 import { validatePartialPost } from '../schemas/PostSchema.js'
-import { deleteImage, storeImage } from '../services/FileService.js'
+import { FileService } from '../services/FileService.js'
 
 /**
  * It allows to use a model for this controller
  * @property {string} postModel
+ * @property {string} imageModel
  */
-
 export class PostController {
-  constructor ({ PostModel }) {
+  constructor ({ PostModel, ImageModel }) {
     this.postModel = PostModel
+    this.imageModel = ImageModel
+    this.fileService = new FileService({ ImageModel: this.imageModel })
   }
 
   getAll = async (req, res) => {
@@ -54,7 +56,7 @@ export class PostController {
 
     // Gestión del archivo
     if (input.data.imagen != null) {
-      const fileStoreId = await storeImage(req.body.imagen) // Contiene la id de la imagen en la BD
+      const fileStoreId = await this.fileService.storeImage({ image: req.body.imagen }) // Contiene la id de la imagen en la BD
 
       if (fileStoreId) {
         input.data.imagenId = fileStoreId
@@ -92,11 +94,11 @@ export class PostController {
 
     // Gestión del archivo
     if (input.data.imagen != null) {
-      const fileStoreId = await storeImage(req.body.imagen) // Contiene la id de la imagen en la BD
+      const fileStoreId = await this.fileService.storeImage({ image: req.body.imagen }) // Contiene la id de la imagen en la BD
       const postOld = await this.postModel.getById({ id }) // Obtenemos el post para luego obtener la id de la imagen
 
       if (postOld[0].imagenId) {
-        await deleteImage({ id: postOld[0].imagenId }) // Eliminamos la imagen del storage y de la base de datos
+        await this.fileService.deleteImage({ id: postOld[0].imagenId }) // Eliminamos la imagen del storage y de la base de datos
       }
 
       if (fileStoreId) {
@@ -119,7 +121,7 @@ export class PostController {
 
     // Eliminar imagen (archivo + row en BD) si el post tiene asignado una imagen
     if (post[0].imagen) {
-      await deleteImage({ id: post[0].imagenId })
+      await this.fileService.deleteImage({ id: post[0].imagenId })
     }
 
     const query = await this.postModel.delete({ id })
@@ -138,7 +140,7 @@ export class PostController {
     await Promise.all(ids.map(async (id) => {
       const post = await this.postModel.getById({ id }) // Obtenemos todos los datos del post para luego usar la id de la imagen para borrarla
       if (post[0].imagenId) { // Comprobamos si el post tiene imagen, ya que la imagen puede ser null y dar un error
-        await deleteImage({ id: post[0].imagenId })
+        await this.fileService.deleteImage({ id: post[0].imagenId })
       }
     }))
 

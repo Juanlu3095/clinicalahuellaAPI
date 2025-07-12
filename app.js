@@ -19,6 +19,7 @@ import { bookingModel } from './models/booking.js'
 import { categoryModel } from './models/category.js'
 import { postModel } from './models/post.js'
 import { userModel } from './models/user.js'
+import { imageModel } from './models/image.js'
 import { doubleCsrfProtection } from './middlewares/csrf.js'
 
 const app = express()
@@ -41,7 +42,7 @@ app.use('/newsletters', createNewsletterRouter({ NewsletterModel: newsletterMode
 app.use('/messages', createMessageRouter({ MessageModel: messageModel }))
 app.use('/bookings', createBookingRouter({ BookingModel: bookingModel }))
 app.use('/appointments', createAppointmentRouter({ AppointmentModel: appointmentModel }))
-app.use('/posts', createPostRouter({ PostModel: postModel }))
+app.use('/posts', createPostRouter({ PostModel: postModel, ImageModel: imageModel }))
 app.use('/categories', createCategoryRouter({ CategoryModel: categoryModel }))
 app.use('/ai', AiRouter())
 app.use('/images', ImageRouter())
