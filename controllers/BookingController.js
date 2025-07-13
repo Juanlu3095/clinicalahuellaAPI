@@ -1,4 +1,3 @@
-import { BookingResource } from '../resources/BookingResource.js'
 import { validateBooking, validatePartialBooking } from '../schemas/BookingSchema.js'
 
 /**
@@ -13,16 +12,15 @@ export class BookingController {
 
   getAll = async (req, res) => {
     const bookings = await this.bookingModel.getAll()
-    const requestUrl = new URL(req.connection.encrypted ? 'https' : 'http' + '://' + req.headers.referrer) // Obtenemos URL completa de donde viene la soliciud
-    res.json({ message: 'Reservas encontradas.', data: BookingResource.protectedArray(bookings, requestUrl) })
+    res.json({ message: 'Reservas encontradas.', data: bookings })
   }
 
   getById = async (req, res) => {
     const { id } = req.params
     const booking = await this.bookingModel.getById({ id })
-    const requestUrl = new URL(req.connection.encrypted ? 'https' : 'http' + '://' + req.headers.referrer)
+
     if (booking) {
-      return res.json({ message: 'Reserva encontrada', data: BookingResource.protected(booking, requestUrl) })
+      return res.json({ message: 'Reserva encontrada', data: booking })
     } else {
       return res.status(404).json({ error: 'Reserva no encontrada.' })
     }

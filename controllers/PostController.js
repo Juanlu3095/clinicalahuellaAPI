@@ -1,6 +1,8 @@
 import { repeatedValues } from '../database/utilities/validations.js'
+import { postsProtected } from '../resources/PostResource.js'
 import { validatePartialPost } from '../schemas/PostSchema.js'
 import { FileService } from '../services/FileService.js'
+import { isValidJwt } from '../utilities/jwtValidation.js'
 
 /**
  * It allows to use a model for this controller
@@ -16,8 +18,10 @@ export class PostController {
 
   getAll = async (req, res) => {
     const { categoria, estado, limit } = req.query
-    const posts = await this.postModel.getAll({ categoria, estado, limit })
+    let posts = await this.postModel.getAll({ categoria, estado, limit })
+
     if (posts.length > 0) {
+      if (!isValidJwt(req.cookies._lh_tk)) posts = postsProtected({ posts })
       res.json({ message: 'Posts encontrados.', data: posts })
     } else {
       res.status(404).json({ error: 'Posts no encontrados.' })
@@ -36,9 +40,10 @@ export class PostController {
 
   getBySlug = async (req, res) => {
     const { slug } = req.params
-    const post = await this.postModel.getBySlug({ slug })
+    let post = await this.postModel.getBySlug({ slug })
 
     if (post) {
+      if (!isValidJwt(req.cookies._lh_tk)) post = postsProtected({ posts: post })
       return res.json({ message: 'Post encontrado.', data: post })
     } else {
       return res.status(404).json({ error: 'Post no encontrado.' })
