@@ -5,7 +5,7 @@ import { errorLogs } from '../services/errorlogs.js'
 export class postModel {
   static async getAll ({ categoria, estado, limit }) {
     try { // ERROR: No se muestran los posts sin categoria aunque no pidamos un estado concreto!!! => LEFT JOIN
-      let query = `SELECT posts.id, slug, titulo, contenido, images.nombre as imagen, categoriaId, categories.nombre as categoria,
+      let query = `SELECT posts.id, slug, titulo, contenido, images.driveId as imagen, categoriaId, categories.nombre as categoria,
                    metadescription, keywords, estado, posts.created_at, posts.updated_at
                    FROM posts
                    LEFT JOIN categories
@@ -47,7 +47,7 @@ export class postModel {
   static async getById ({ id }) {
     try {
       const [post] = await pool.execute(
-        `SELECT posts.id, slug, titulo, contenido, imagenId, images.nombre as imagen, categoriaId, categories.nombre as categoria,
+        `SELECT posts.id, slug, titulo, contenido, imagenId, images.driveId as imagen, categoriaId, categories.nombre as categoria,
                 metadescription, keywords, estado, posts.created_at, posts.updated_at
                 FROM posts
                 LEFT JOIN categories
@@ -70,7 +70,7 @@ export class postModel {
   static async getBySlug ({ slug }) {
     try {
       const [post] = await pool.execute(
-        `SELECT posts.id, slug, titulo, contenido, categoriaId, categories.nombre as categoria, images.nombre as imagen,
+        `SELECT posts.id, slug, titulo, contenido, categoriaId, categories.nombre as categoria, images.driveId as imagen,
                 metadescription, keywords, estado, posts.created_at, posts.updated_at
         FROM posts
         LEFT JOIN categories

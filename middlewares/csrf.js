@@ -1,5 +1,4 @@
 import { doubleCsrf } from 'csrf-csrf'
-import 'dotenv/config'
 import crypto from 'node:crypto'
 
 const id = crypto.randomBytes(32).toString('base64') // Se usará en caso de un usuario no autenticado

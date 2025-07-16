@@ -1,23 +1,18 @@
-import 'dotenv/config'
 import nodemailer from 'nodemailer'
-import { google } from 'googleapis'
 import { errorLogs } from './errorlogs.js'
+import { setOauth2client } from './GoogleAuthService.js'
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
 const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN
-const REDIRECT_URL = 'https://developers.google.com/oauthplayground/'
 const MAIL = process.env.MAIL_AUTH_USER
 
-// Metemos todo en una función asíncrona con catch para que no detenga la API en caso de que caduque el refreshToken
-const createTransporter = async () => {
-  const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
-
-  oauth2Client.setCredentials({
-    refresh_token: REFRESH_TOKEN
-  })
-
-  const { token } = await oauth2Client.getAccessToken()
+/**
+ * Allows to send and email to client when an appointment is created
+ * @param {string} email The email this mail is sent to.
+ */
+export const sendEmailAppointment = async (data) => {
+  const { token } = await setOauth2client().getAccessToken()
     .catch((error) => {
       console.error(error) // CAMBIAR ESTO POR ERRORLOGS
     })
@@ -34,17 +29,9 @@ const createTransporter = async () => {
     }
   })
 
-  return transporter
-}
-
-/**
- * Allows to send and email to client when an appointment is created
- * @param {string} email The email this mail is sent to.
- */
-export const sendEmailAppointment = async (data) => {
   const fecha = new Date(data.fecha).toLocaleDateString()
   try {
-    await createTransporter.sendMail({
+    await transporter.sendMail({
       from: '"Clínica veterinaria La Huella" <Clinica La Huella>',
       to: data.email,
       subject: 'Tu cita en La Huella',

@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express, { json } from 'express'
 import { applycors } from './middlewares/cors.js'
 import cookieParser from 'cookie-parser'

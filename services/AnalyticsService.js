@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import { BetaAnalyticsDataClient } from '@google-analytics/data'
 
 const { GOOGLE_CLIENT_SERVICE_EMAIL, GOOGLE_CLIENT_SERVICE_PRIVATE_KEY, PROPERTY_ID } = process.env

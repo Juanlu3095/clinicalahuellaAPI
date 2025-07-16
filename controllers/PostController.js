@@ -1,7 +1,7 @@
 import { repeatedValues } from '../database/utilities/validations.js'
 import { postsProtected } from '../resources/PostResource.js'
 import { validatePartialPost } from '../schemas/PostSchema.js'
-import { FileService } from '../services/FileService.js'
+import { DriveService } from '../services/DriveService.js'
 import { isValidJwt } from '../utilities/jwtValidation.js'
 
 /**
@@ -13,7 +13,7 @@ export class PostController {
   constructor ({ PostModel, ImageModel }) {
     this.postModel = PostModel
     this.imageModel = ImageModel
-    this.fileService = new FileService({ ImageModel: this.imageModel })
+    this.fileService = new DriveService({ ImageModel: this.imageModel })
   }
 
   getAll = async (req, res) => {
@@ -61,13 +61,31 @@ export class PostController {
 
     // Gestión del archivo
     if (input.data.imagen != null) {
-      const fileStoreId = await this.fileService.storeImage({ image: req.body.imagen }) // Contiene la id de la imagen en la BD
+      // Obtenemos la id de la carpeta
+      let folderId
+      const folder = await this.fileService.getFoldersByName({ name: 'lahuella' })
+      if (folder.length === 0) {
+        folderId = await this.fileService.createFolderDrive({ folder: 'lahuella' })
+      } else {
+        folderId = folder[0].id
+      }
+
+      const fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folderId })
+      if (fileStoreId) {
+        input.data.imagenId = fileStoreId
+      } else {
+        input.data.imagenId = null
+      }
+      /* let fileStoreId
+      let folder = this.fileService.getFoldersByName({ name: 'lahuella' })
+      if (folder.length === 0) {
+        folder = this.fileService.createFolderDrive({ folder: 'lahuella' })
+      }
+      fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folder.id }) // Contiene la id de la imagen en la BD
 
       if (fileStoreId) {
         input.data.imagenId = fileStoreId
-      }
-    } else {
-      input.data.imagenId = null
+      } */
     }
     delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
 
@@ -99,11 +117,12 @@ export class PostController {
 
     // Gestión del archivo
     if (input.data.imagen != null) {
-      const fileStoreId = await this.fileService.storeImage({ image: req.body.imagen }) // Contiene la id de la imagen en la BD
+      const folder = await this.fileService.getFoldersByName({ name: 'lahuella' })
+      const fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folder[0].id }) // Contiene la id de la imagen en la BD
       const postOld = await this.postModel.getById({ id }) // Obtenemos el post para luego obtener la id de la imagen
 
       if (postOld[0].imagenId) {
-        await this.fileService.deleteImage({ id: postOld[0].imagenId }) // Eliminamos la imagen del storage y de la base de datos
+        await this.fileService.deleteImageDrive({ id: postOld[0].imagenId }) // Eliminamos la imagen del storage y de la base de datos
       }
 
       if (fileStoreId) {
@@ -126,7 +145,7 @@ export class PostController {
 
     // Eliminar imagen (archivo + row en BD) si el post tiene asignado una imagen
     if (post[0].imagen) {
-      await this.fileService.deleteImage({ id: post[0].imagenId })
+      await this.fileService.deleteImageDrive({ id: post[0].imagenId })
     }
 
     const query = await this.postModel.delete({ id })
@@ -145,7 +164,7 @@ export class PostController {
     await Promise.all(ids.map(async (id) => {
       const post = await this.postModel.getById({ id }) // Obtenemos todos los datos del post para luego usar la id de la imagen para borrarla
       if (post[0].imagenId) { // Comprobamos si el post tiene imagen, ya que la imagen puede ser null y dar un error
-        await this.fileService.deleteImage({ id: post[0].imagenId })
+        await this.fileService.deleteImageDrive({ id: post[0].imagenId })
       }
     }))
 
