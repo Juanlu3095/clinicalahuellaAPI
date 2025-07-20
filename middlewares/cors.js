@@ -14,12 +14,12 @@ export const applycors = () =>
       }
 
       // Esto es sólo para desarrollo, pues REST Client no manda origin
-      if (!origin) {
+      /* if (!origin) {
         console.log('cors incorrecto')
         return callback(null, true)
-      }
+      } */
 
-      return callback(new Error('Not allowed by CORS'))
+      return callback(new Error('Solicitud no permitida por CORS.'))
     },
     credentials: true // para que el navegador acepte y guarde cookies enviadas por la api
   })

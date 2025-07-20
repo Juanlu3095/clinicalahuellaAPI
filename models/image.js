@@ -1,7 +1,12 @@
 import { errorLogs } from '../services/errorlogs.js'
-import { pool } from '../pconnection.js'
+import { pool } from '../database/pconnection.js'
 
 export class imageModel {
+  /**
+   * It returns a row of image table by id.
+   * @param {string} id The id of the image in database
+   * @returns {QueryResult}
+   */
   static async getById ({ id }) {
     try {
       const [image] = await pool.execute(
@@ -18,6 +23,11 @@ export class imageModel {
     }
   }
 
+  /**
+   * It saves an image row in database and returns its generated id.
+   * @param {*} input It contains the name of the file and id in Drive
+   * @returns {number}
+   */
   static async create ({ input }) {
     const { nombre, driveId } = input
     try {
@@ -35,6 +45,11 @@ export class imageModel {
     }
   }
 
+  /**
+   * It deletes an image from database.
+   * @param {number} id The id of the row containing the image in database
+   * @returns The result of the query
+   */
   static async delete ({ id }) {
     try {
       const query = 'DELETE FROM images WHERE id = ?'

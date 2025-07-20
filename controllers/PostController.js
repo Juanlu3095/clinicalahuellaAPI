@@ -13,7 +13,7 @@ export class PostController {
   constructor ({ PostModel, ImageModel }) {
     this.postModel = PostModel
     this.imageModel = ImageModel
-    this.fileService = new DriveService({ ImageModel: this.imageModel })
+    this.fileService = new DriveService({ ImageModel: this.imageModel }) // ESTO DEBERÍA INYECTARSE DESDE APP.JS PARA LOS TESTS
   }
 
   getAll = async (req, res) => {
@@ -70,22 +70,13 @@ export class PostController {
         folderId = folder[0].id
       }
 
+      // Guardamos la imagen en Drive y obtenemos la id de la imagen en la base de datos para meterla en la id de imagen en la tabla de posts
       const fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folderId })
       if (fileStoreId) {
         input.data.imagenId = fileStoreId
       } else {
         input.data.imagenId = null
       }
-      /* let fileStoreId
-      let folder = this.fileService.getFoldersByName({ name: 'lahuella' })
-      if (folder.length === 0) {
-        folder = this.fileService.createFolderDrive({ folder: 'lahuella' })
-      }
-      fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folder.id }) // Contiene la id de la imagen en la BD
-
-      if (fileStoreId) {
-        input.data.imagenId = fileStoreId
-      } */
     }
     delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
 

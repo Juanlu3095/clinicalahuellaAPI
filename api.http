@@ -225,12 +225,32 @@ Content-Type: application/json
   "query": "Dame ideas para entradas de blog sobre veterinaria"
 }
 
-### Prueba login
-POST http://localhost:3000/login
+### Comprobar login
+GET http://localhost:3000/auth/login
 Content-Type: application/json
-Origin: http://origin.es
+Origin: http://localhost:4200
+
+### Realizar login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+Origin: http://localhost:4200
 
 {
   "email": "jcooldevelopment@gmail.com",
   "password": "jacintoPerez50@2025."
 }
+
+### Obtener CSRF Token
+GET http://localhost:3000/csrf
+
+### Obtener datos de Analytics por pageurl
+GET http://localhost:3000/analytics/pageurl
+Cookie: _lh_tk=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiSnVhbiBEZXYiLCJpYXQiOjE3NTMwMzM4NTYsImV4cCI6MTc1MzAzNzQ1Nn0.bUVJwaYbv5PJ5Ts64LR1l3bhoHTMF-WtfJuMX_15yMA
+
+### Obtener datos de Analytics por country
+GET http://localhost:3000/analytics/country
+Cookie: _lh_tk=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiSnVhbiBEZXYiLCJpYXQiOjE3NTMwMzM4NTYsImV4cCI6MTc1MzAzNzQ1Nn0.bUVJwaYbv5PJ5Ts64LR1l3bhoHTMF-WtfJuMX_15yMA
+
+### Obtener datos de Analytics por device
+GET http://localhost:3000/analytics/device
+Cookie: _lh_tk=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiSnVhbiBEZXYiLCJpYXQiOjE3NTMwMzM4NTYsImV4cCI6MTc1MzAzNzQ1Nn0.bUVJwaYbv5PJ5Ts64LR1l3bhoHTMF-WtfJuMX_15yMA

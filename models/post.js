@@ -1,5 +1,5 @@
 // Conexión con la base de datos de mysql por pool connection
-import { pool } from '../pconnection.js'
+import { pool } from '../database/pconnection.js'
 import { errorLogs } from '../services/errorlogs.js'
 
 export class postModel {
@@ -126,7 +126,6 @@ export class postModel {
     }
   }
 
-  // HAY QUE VER COMO METER imagenId
   static async patch ({ id, input }) {
     const keys = Object.keys(input) // Obtenemos las propiedades de un objeto JS (input)
     const values = Object.values(input) // Obtenemos los valores de un objeto JS (input)

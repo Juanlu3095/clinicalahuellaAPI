@@ -31,7 +31,6 @@ export class DriveService {
         q: `name= "${name}" and mimeType="application/vnd.google-apps.folder"`
       })
       const folders = response.data.files
-      console.log('GET FOLDERS: ', folders)
       return folders
     } catch (error) {
       console.error(error)
@@ -71,15 +70,11 @@ export class DriveService {
     }
   }
 
-  // https://developers.google.com/workspace/drive/api/quickstart/nodejs?hl=es-419
-  // https://developers.google.com/workspace/drive/api/guides/manage-uploads?hl=es-419
-  // https://developers.google.com/workspace/drive/api/guides/manage-sharing?hl=es-419#capabilities permisos
-  // https://dev.to/mearjuntripathi/upload-files-on-drive-with-nodejs-15j2
   /**
    * Stores an image in Drive and returns the id of this image in database.
    * @param { string } image The image's string in base64 format.
    * @param { string } folder The id of the folder in which the image will be stored.
-   * @returns { number }
+   * @returns { number | null }
    */
   storeImageDrive = async ({ image, folder }) => {
     const matches = image.match(/^data:([A-Za-z-+/]+);base64,(.+)$/) // Comprueba si es un string en base64
@@ -120,9 +115,6 @@ export class DriveService {
           type: 'anyone'
         }
       })
-      console.log('Archivo: ', media.body)
-      console.log('response Id:', response.data.id)
-      console.log('Tipo: ', typeof (response.data.id))
 
       const input = {
         nombre: fileName,
@@ -139,7 +131,7 @@ export class DriveService {
 
   /**
    * Deletes a file in Drive.
-   * @param { string } file It contains the image id in database.
+   * @param { number } file It contains the image id in database.
    * @returns { GaxiosResponseWithHTTP2<void> }
    */
   deleteImageDrive = async ({ id }) => {

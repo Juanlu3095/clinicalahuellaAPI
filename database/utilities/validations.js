@@ -1,4 +1,4 @@
-import { pool } from '../../pconnection.js'
+import { pool } from '../pconnection.js'
 
 /**
  * @param {string} table Represents the table to check in database

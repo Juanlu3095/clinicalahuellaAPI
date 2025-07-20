@@ -7,6 +7,7 @@ export class AuthController {
     this.userModel = UserModel
   }
 
+  // Comprueba si el usuario está logueado comprobando el JWT en las cookies.
   getLogin = (req, res) => {
     const jwtToken = req.cookies._lh_tk
 
@@ -24,8 +25,9 @@ export class AuthController {
     }
   }
 
+  // Realiza el inicio de sesión.
   login = async (req, res) => {
-    const validation = validateLogin(req.body)
+    const validation = validateLogin(req.body) // Valida los input con el Schema
 
     if (!validation.success) {
       res.status(422).json({ error: JSON.parse(validation.error.message) })
@@ -52,6 +54,7 @@ export class AuthController {
     }).json({ message: 'Usuario y contraseña correctos.', data: `${user.nombre} ${user.apellidos}` })
   }
 
+  // Cierra la sesión eliminando además la cookie del navegador.
   logout = (req, res) => {
     const jwtToken = req.cookies._lh_tk
 

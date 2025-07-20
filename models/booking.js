@@ -1,5 +1,5 @@
 // Conexión con la base de datos de mysql por pool connection
-import { pool } from '../pconnection.js'
+import { pool } from '../database/pconnection.js'
 
 export class bookingModel {
   static async getAll () {
