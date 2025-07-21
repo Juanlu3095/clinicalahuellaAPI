@@ -1,5 +1,3 @@
-// Conexión con la base de datos de mysql
-// import mysql from 'mysql2/promise'
 import { DatabaseMigration } from './database.js'
 import { NewsletterMigration } from './create_newsletters_table.js'
 import { MessageMigration } from './create_messages_table.js'

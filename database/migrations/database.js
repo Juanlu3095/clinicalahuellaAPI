@@ -24,4 +24,20 @@ export class DatabaseMigration {
       await connection.end()
     }
   }
+
+  async deleteDB () {
+    const connection = await mysql.createConnection(this.configuracion)
+
+    try {
+      const [db] = await connection.query(
+        `DROP DATABASE IF EXISTS ${this.configuracion.database};`
+      )
+      console.log('Base de datos eliminada con éxito.')
+      return [db]
+    } catch (error) {
+      console.error('Error al eliminar la base de datos:', error)
+    } finally {
+      await connection.end()
+    }
+  }
 }
