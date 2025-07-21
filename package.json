@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate:mysql": "node database/migrations/mysql.js",
-    "seed:mysql": "node database/seeders/mysqlseeder.js",
-    "dev": "node --watch server.js",
-    "prod": "node server.js"
+    "migrate:mysql": "node src/database/migrations/mysql.js",
+    "seed:mysql": "node src/database/seeders/mysqlseeder.js",
+    "dev": "node --watch src/server.js",
+    "prod": "node src/server.js"
   },
   "keywords": [
     "api",
