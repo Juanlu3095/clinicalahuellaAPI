@@ -41,7 +41,7 @@ Content-Type: application/json
   "nombre": "Pepe",
   "apellidos": "González",
   "email": "pepi@gmail.com",
-  "telefono": 952122331,
+  "telefono": "952122331",
   "asunto": "Hola qué tal",
   "mensaje": "Este es el mensaje creado."
 }
