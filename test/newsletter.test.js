@@ -2,34 +2,32 @@ import { app } from './config/apptest.js'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals'
 import { DatabaseMigration } from '../src/database/migrations/database.js'
-import { MessageMigration } from '../src/database/migrations/create_messages_table.js'
 import { UserMigration } from '../src/database/migrations/create_user_table.js'
 import { UserSeeder } from '../src/database/seeders/userseeder.js'
-import { MessageSeeder } from '../src/database/seeders/messageseeder.js'
+import { NewsletterMigration } from '../src/database/migrations/create_newsletters_table.js'
+import { NewsletterSeeder } from '../src/database/seeders/newsletterseeder.js'
 
 let xsrfToken = ''
 let xsrfTokenAdmin = ''
 let jwt = ''
 let jwtCookie = ''
-let messages = [] // Los mensajes creados con el seed y el test con POST
+let newsletters = [] // Los mensajes creados con el seed y el test con POST
 let databasemigration = {}
 
-const newMessage = {
-  nombre: 'Pepe',
-  apellidos: 'González',
-  email: 'pepi@gmail.com',
-  telefono: '952122331',
-  asunto: 'Hola qué tal',
-  mensaje: 'Este es el mensaje creado.'
+const newNewsletter = {
+  email: 'pepe@gmail.com'
 }
 
-const wrongNewMessage = {
-  nombre: 'Pepe',
-  apellidos: 'González',
-  email: 'pepi@gmail.com',
-  telefono: 952122331,
-  asunto: 'Hola qué tal',
-  mensaje: 'Este es el mensaje creado.'
+const repeatedEmail = {
+  email: 'jdevtoday25@gmail.com'
+}
+
+const wrongNewsletter = {
+  email: 'pepe'
+}
+
+const updatedNewsletter = {
+  email: 'pepa@gmail.com'
 }
 
 // CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLA MESSAGES Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
@@ -44,15 +42,15 @@ beforeAll(async () => {
   }
   databasemigration = new DatabaseMigration({ config })
   await databasemigration.createDB()
-  const messagetablemigration = new MessageMigration({ config })
-  await messagetablemigration.createMessages()
+  const newsletterMigration = new NewsletterMigration({ config })
+  await newsletterMigration.createNewsletters()
   const usermigration = new UserMigration({ config })
   await usermigration.createUsers()
 
   const userSeeder = new UserSeeder({ config })
   await userSeeder.createuser()
-  const messageSeeder = new MessageSeeder({ config })
-  messageSeeder.createmessage()
+  const newsletterSeeder = new NewsletterSeeder({ config })
+  newsletterSeeder.createnewsletter()
 
   // Obtener CSRF token
   const xsrfTokenGet = await request(app).get('/csrf')
@@ -80,208 +78,192 @@ afterAll(async () => {
   await databasemigration.deleteDB()
 })
 
-// TESTS
-describe('API /messages', () => {
-  test('should create a message.', async () => {
+describe('API /newsletters', () => {
+  test('should create a newsletter.', async () => {
     const response = await request(app)
-      .post('/messages')
+      .post('/newsletters')
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`)
-      .send(newMessage)
+      .send(newNewsletter)
     expect(response.statusCode).toBe(201)
   })
 
-  test('should not create a message because schema is not valid.', async () => {
+  test('should not create a newsletter because already exists.', async () => {
     const response = await request(app)
-      .post('/messages')
+      .post('/newsletters')
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`)
-      .send(wrongNewMessage)
+      .send(repeatedEmail)
+    expect(response.statusCode).toBe(409)
+  })
+
+  test('should not create a newsletter because schema is not valid.', async () => {
+    const response = await request(app)
+      .post('/newsletters')
+      .set('_xsrf_token', xsrfToken)
+      .set('Cookie', `_xsrf_token=${xsrfToken}`)
+      .send(wrongNewsletter)
     expect(response.statusCode).toBe(422)
   })
 
-  test('should not create a message because xsrf_token was not sent.', async () => {
+  test('should not create a newsletter because xsrf_token was not sent.', async () => {
     const response = await request(app)
-      .post('/messages')
-      .send(newMessage)
+      .post('/newsletters')
+      .send(newNewsletter)
     expect(response.statusCode).toBe(403)
   })
 
-  test('should get all messages.', async () => {
+  test('should get all newsletters.', async () => {
     const response = await request(app)
-      .get('/messages')
+      .get('/newsletters')
       .set('Cookie', jwt)
     expect(response.statusCode).toBe(200)
-    messages = JSON.parse(response.text).data
+    newsletters = JSON.parse(response.text).data
+    console.log('Estas son las newsletters: ', newsletters)
   })
 
-  test('should not get all messages because not logged in.', async () => {
+  test('should not get all newsletters because not logged in.', async () => {
     const response = await request(app)
-      .get('/messages')
+      .get('/newsletters')
     expect(response.statusCode).toBe(401)
   })
 
-  test('should get a message by id.', async () => {
+  test('should get a newsletter by id.', async () => {
     const response = await request(app)
-      .get(`/messages/${messages[0].id}`)
+      .get(`/newsletters/${newsletters[0].id}`)
       .set('Cookie', jwt)
     expect(response.statusCode).toBe(200)
   })
 
-  test('should not get a message by id because not found.', async () => {
+  test('should not get a newsletter by id because not found.', async () => {
     const response = await request(app)
-      .get('/messages/1')
+      .get('/newsletters/1')
       .set('Cookie', jwt)
     expect(response.statusCode).toBe(404)
   })
 
-  test('should not get a message by id because user is not logged in.', async () => {
+  test('should not get a newsletter by id because user is not logged in.', async () => {
     const response = await request(app)
-      .get(`/messages/${messages[0].id}`)
+      .get(`/newsletters/${newsletters[0].id}`)
     expect(response.statusCode).toBe(401)
   })
 
-  test('should update a message by id', async () => {
-    const updatedMessage = {
-      nombre: 'Pepe',
-      apellidos: 'Jiménez',
-      email: 'pepe@gmail.com',
-      telefono: '952122331',
-      asunto: 'Hola qué tal',
-      mensaje: 'Este es el mensaje creado.'
-    }
-
+  test('should update a newsletter by id', async () => {
     const response = await request(app)
-      .put(`/messages/${messages[0].id}`)
+      .patch(`/newsletters/${newsletters[0].id}`)
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
-      .send(updatedMessage)
+      .send(updatedNewsletter)
     expect(response.status).toBe(200)
   })
 
-  test('should not update a message by id because schema is not valid', async () => {
-    const wrongUpdatedMessage = {
-      nombre: 'Pepe',
-      apellidos: 'Jiménez',
-      email: 'pepe@gmail.com',
-      telefono: 952122331,
-      asunto: 'Hola qué tal',
-      mensaje: 'Este es el mensaje creado.'
-    }
-
+  test('should not update a newsletter by id because the email already exists.', async () => {
     const response = await request(app)
-      .put(`/messages/${messages[0].id}`)
+      .patch(`/newsletters/${newsletters[0].id}`)
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
-      .send(wrongUpdatedMessage)
+      .send(repeatedEmail)
+    expect(response.status).toBe(409)
+  })
+
+  test('should not update a newsletter by id because schema is not valid', async () => {
+    const response = await request(app)
+      .patch(`/newsletters/${newsletters[0].id}`)
+      .set('_xsrf_token', xsrfTokenAdmin)
+      .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
+      .send(wrongNewsletter)
     expect(response.status).toBe(422)
   })
 
-  test('should not update a message by id because CSRF Protection.', async () => {
-    const updatedMessage = {
-      nombre: 'Pepe',
-      apellidos: 'Jiménez',
-      email: 'pepe@gmail.com',
-      telefono: '952122331',
-      asunto: 'Hola qué tal',
-      mensaje: 'Este es el mensaje creado.'
-    }
+  test('should not update a newsletter by id because CSRF Protection.', async () => {
     const response = await request(app)
-      .put(`/messages/${messages[0].id}`)
+      .patch(`/newsletters/${newsletters[0].id}`)
       .set('Cookie', jwt)
-      .send(updatedMessage)
+      .send(updatedNewsletter)
     expect(response.status).toBe(403)
   })
 
-  test('should not update a message by id because not logged in.', async () => {
-    const updatedMessage = {
-      nombre: 'Pepe',
-      apellidos: 'Jiménez',
-      email: 'pepe@gmail.com',
-      telefono: '952122331',
-      asunto: 'Hola qué tal',
-      mensaje: 'Este es el mensaje creado.'
-    }
+  test('should not update a newsletter by id because not logged in.', async () => {
     const response = await request(app)
-      .put(`/messages/${messages[0].id}`)
+      .patch(`/newsletters/${newsletters[0].id}`)
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`) // Si no se está logueado debe ir con el csrf token sin jwt
-      .send(updatedMessage)
+      .send(updatedNewsletter)
     expect(response.status).toBe(401)
   })
 
-  test('should delete a message by id', async () => {
+  test('should delete a newsletter by id', async () => {
     const response = await request(app)
-      .delete(`/messages/${messages[0].id}`)
+      .delete(`/newsletters/${newsletters[0].id}`)
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
     expect(response.status).toBe(200)
   })
 
-  test('should not delete a message by id because not found', async () => {
+  test('should not delete a newsletter by id because not found', async () => {
     const response = await request(app)
-      .delete('/messages/1}')
+      .delete('/newsletters/1}')
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
     expect(response.status).toBe(404)
   })
 
-  test('should not delete a message by id because CSRF Protection.', async () => {
+  test('should not delete a newsletter by id because CSRF Protection.', async () => {
     const response = await request(app)
-      .delete(`/messages/${messages[0].id}`)
+      .delete(`/newsletters/${newsletters[0].id}`)
       .set('Cookie', jwt)
     expect(response.status).toBe(403)
   })
 
-  test('should not delete a message by id because not logged in.', async () => {
+  test('should not delete a newsletter by id because not logged in.', async () => {
     const response = await request(app)
-      .delete(`/messages/${messages[0].id}`)
+      .delete(`/newsletters/${newsletters[0].id}`)
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`)
     expect(response.status).toBe(401)
   })
 
-  test('should delete a selection of messages.', async () => {
+  test('should delete a selection of newsletters.', async () => {
     const idArray = {
-      ids: [messages[1].id, messages[2].id, messages[3].id]
+      ids: [newsletters[1].id, newsletters[2].id]
     }
     const response = await request(app)
-      .delete('/messages')
+      .delete('/newsletters')
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
       .send(idArray)
     expect(response.status).toBe(200)
   })
 
-  test('should not delete a selection of messages because not found.', async () => {
+  test('should not delete a selection of newsletters because not found.', async () => {
     const idArray = {
       ids: ['1', '2', '3']
     }
     const response = await request(app)
-      .delete('/messages')
+      .delete('/newsletters')
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
       .send(idArray)
     expect(response.status).toBe(404)
   })
 
-  test('should not delete a selection of messages because CSRF Protection.', async () => {
+  test('should not delete a selection of newsletters because CSRF Protection.', async () => {
     const idArray = {
-      ids: [messages[1].id, messages[2].id, messages[3].id]
+      ids: [newsletters[1].id, newsletters[2].id]
     }
     const response = await request(app)
-      .delete('/messages')
+      .delete('/newsletters')
       .set('Cookie', jwt)
       .send(idArray)
     expect(response.status).toBe(403)
   })
 
-  test('should not delete a selection of messages because not logged in.', async () => {
+  test('should not delete a selection of newsletters because not logged in.', async () => {
     const idArray = {
-      ids: [messages[1].id, messages[2].id, messages[3].id]
+      ids: [newsletters[1].id, newsletters[2].id]
     }
     const response = await request(app)
-      .delete('/messages')
+      .delete('/newsletters')
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`)
       .send(idArray)

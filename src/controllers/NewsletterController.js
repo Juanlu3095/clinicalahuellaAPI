@@ -57,7 +57,7 @@ export class NewsletterController {
     const { id } = req.params
 
     if (!input.success) {
-      return res.status(400).json({ error: JSON.parse(input.error.message) })
+      return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
     // Se comprueba que el email no se repita al editarlo
@@ -93,7 +93,7 @@ export class NewsletterController {
     const newsletters = await this.newsletterModel.deleteSelection({ ids })
 
     if (newsletters) {
-      res.json({ message: 'Newsletters eliminadas.' }) // Comprobar si esto le sirve de algo al frontend en categorias
+      res.json({ message: 'Newsletters eliminadas.' })
     } else {
       return res.status(404).json({ error: 'Newsletters no encontradas.' })
     }
