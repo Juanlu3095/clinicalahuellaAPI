@@ -8,17 +8,39 @@ export class BookingSeeder {
   createBooking = () => {
     const connection = mysql.createConnection(this.configuracion)
     const sql = 'INSERT INTO bookings (nombre, apellidos, email, telefono, fecha, hora) VALUES (?, ?, ?, ?, ?, ?);'
-    const values = ['Pepe', 'López', 'jdevtoday25@gmail.com', '952123654', '2025-02-25', '12:00']
+    const bookings = [
+      {
+        nombre: 'Pepe',
+        apellidos: 'López',
+        email: 'plopez@gmail.com',
+        telefono: '655854770',
+        fecha: '2025-02-25',
+        hora: '13:00'
+      },
+      {
+        nombre: 'Alberto',
+        apellidos: 'Jiménez',
+        email: 'ajimenez@gmail.com',
+        telefono: '655854111',
+        fecha: '2025-05-27',
+        hora: '14:00'
+      }
+    ]
+    let filasafectadas = 0
 
     return new Promise((resolve, reject) => {
-      connection.execute(sql, values, (err, result, fields) => {
-        if (err) {
-          console.error('Error al crear las reservas:', err)
-          reject(err)
-        }
-        console.log(`Reservas creadas con éxito. ${result.affectedRows} fila(s) creadas.`)
-        resolve(result)
+      bookings.map((element) => {
+        const values = Object.values(element)
+        return connection.execute(sql, values, (error, result, fields) => {
+          if (error) {
+            console.error('Error al crear las reservas:', error)
+            reject(error)
+          }
+          filasafectadas = filasafectadas + result.affectedRows
+          resolve(result)
+        })
       })
+      console.log(`Reservas creadas con éxito. ${filasafectadas} fila(s) creadas.`)
       connection.end()
     })
   }
