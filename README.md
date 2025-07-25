@@ -1,7 +1,7 @@
 
 # Clínica La Huella API
 
-Clínica La Huella API es una API Rest que utiliza node.js, Express y MySQL para ofrecer una solución para el backend de para una clínica ficticia de veterinaria.
+Clínica La Huella API es una API Rest que utiliza node.js, Express y MySQL para ofrecer una solución para el backend de una clínica ficticia de veterinaria.
 
 ## Requisitos
 
