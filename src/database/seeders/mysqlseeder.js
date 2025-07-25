@@ -1,5 +1,6 @@
 import { UserSeeder } from './userseeder.js'
 import { BookingSeeder } from './bookingseeder.js'
+import { AppointmentSeeder } from './appointmentseeder.js'
 import { MessageSeeder } from './messageseeder.js'
 import { NewsletterSeeder } from './newsletterseeder.js'
 import { CategorySeeder } from './categoryseeder.js'
@@ -21,6 +22,7 @@ const userSeeder = new UserSeeder({ config })
 const newsletterSeeder = new NewsletterSeeder({ config })
 const messageSeeder = new MessageSeeder({ config })
 const bookingsSeeder = new BookingSeeder({ config })
+const appointmentSeeder = new AppointmentSeeder({ config })
 const categoriesSeeder = new CategorySeeder({ config })
 const postSeeder = new PostSeeder({ config })
 
@@ -31,6 +33,7 @@ const seeders = async () => {
   const newsletters = await newsletterSeeder.createnewsletter().catch(e => errors.push(e))
   const messages = await messageSeeder.createmessage().catch(e => errors.push(e))
   const bookings = await bookingsSeeder.createBooking().catch(e => errors.push(e))
+  const appointments = await appointmentSeeder.createAppointment().catch(e => errors.push(e))
   const categories = await categoriesSeeder.createcategory().catch(e => errors.push(e))
   const posts = await postSeeder.createPost().catch(e => errors.push(e))
 
@@ -39,10 +42,10 @@ const seeders = async () => {
   }
 
   return [
-    user, newsletters, messages, bookings, categories, posts
+    user, newsletters, messages, bookings, appointments, categories, posts
   ]
 }
 
 seeders()
   .then(respuesta => console.log('Ejecución de los seeders finalizada.'))
-  .catch(error => { console.error('Error al ejecutar los seeders:', error) })
+  .catch(error => console.error('Error al ejecutar los seeders:', error))
