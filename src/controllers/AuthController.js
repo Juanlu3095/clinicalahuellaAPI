@@ -30,7 +30,7 @@ export class AuthController {
     const validation = validateLogin(req.body) // Valida los input con el Schema
 
     if (!validation.success) {
-      res.status(422).json({ error: JSON.parse(validation.error.message) })
+      return res.status(422).json({ error: JSON.parse(validation.error.message) })
     }
 
     const user = await this.userModel.getUserByEmail({ email: validation.data.email })
