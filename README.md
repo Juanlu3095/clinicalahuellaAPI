@@ -12,12 +12,12 @@ Para utilizar esta API necesitas tener instalado lo siguiente:
 
 ## Instalación
 
-1. Clona el repositorio
+1. Clona el repositorio.
 
 ```bash
   git clone https://github.com/Juanlu3095/clinicalahuellaAPI.git
 ```
-2. Instala las dependencias
+2. Instala las dependencias.
 
 ```bash
   npm install
@@ -31,19 +31,19 @@ Para utilizar esta API necesitas tener instalado lo siguiente:
 - GOOGLE_CLIENT_SERVICE_EMAIL, GOOGLE_CLIENT_SERVICE_PRIVATE_KEY y PROPERTY_ID para Google Analytics obtenibles también en https://console.developers.google.com/ con una cuenta de servicio.
 
 
-4. Migra la base de datos
+4. Crea la base de datos.
 
 ```bash
   npm run migrate:mysql
 ```
 
-5. Crea valores en las tablas (Opcional)
+5. Crea valores en las tablas.
 
 ```bash
   npm run seed:mysql
 ```
 
-6. Ejecuta el servidor
+6. Ejecuta el servidor.
 
 ```bash
   npm run prod

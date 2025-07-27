@@ -2,46 +2,31 @@ import { app } from './config/apptest.js'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals'
 import { DatabaseMigration } from '../src/database/migrations/database.js'
+import { CategoryMigration } from '../src/database/migrations/create_categories_table.js'
 import { UserMigration } from '../src/database/migrations/create_user_table.js'
 import { UserSeeder } from '../src/database/seeders/userseeder.js'
-import { BookingMigration } from '../src/database/migrations/create_bookings_table.js'
-import { BookingSeeder } from '../src/database/seeders/bookingseeder.js'
+import { CategorySeeder } from '../src/database/seeders/categoryseeder.js'
 
 let xsrfToken = ''
 let xsrfTokenAdmin = ''
 let jwt = ''
 let jwtCookie = ''
-let bookings = []
+let categories = [] // Los mensajes creados con el seed y el test con POST
 let databasemigration = {}
 
-const newBooking = {
-  nombre: 'Alba',
-  apellidos: 'Moreno',
-  email: 'amoreno@gmail.com',
-  telefono: '655854770',
-  fecha: '2025-09-25',
-  hora: '12:00'
+const newCategory = {
+  nombre: 'Animales'
 }
 
-const wrongBooking = {
-  nombre: 'Alba',
-  apellidos: 'Moreno',
-  email: 'amoreno@gmail.com',
-  telefono: 655854770,
-  fecha: '2025-09-25',
-  hora: '12:00'
+const updatedCategory = {
+  nombre: 'Cuidados'
 }
 
-const updateBooking = {
-  nombre: 'Alba',
-  apellidos: 'Moreno',
-  email: 'amoreno@gmail.com',
-  telefono: '655854765',
-  fecha: '2025-10-12',
-  hora: '14:00'
+const wrongCategory = {
+  nombre: ''
 }
 
-// CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLAS BOOKINGS Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
+// CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLAS MESSAGES Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
 beforeAll(async () => {
   const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE_TEST, FIRST_USER_EMAIL, FIRST_USER_PASS } = process.env
   const config = {
@@ -53,15 +38,15 @@ beforeAll(async () => {
   }
   databasemigration = new DatabaseMigration({ config })
   await databasemigration.createDB()
-  const bookingMigration = new BookingMigration({ config })
-  await bookingMigration.createBookings()
-  const userMigration = new UserMigration({ config })
-  await userMigration.createUsers()
+  const categorymigration = new CategoryMigration({ config })
+  await categorymigration.createCategories()
+  const usermigration = new UserMigration({ config })
+  await usermigration.createUsers()
 
   const userSeeder = new UserSeeder({ config })
   await userSeeder.createuser()
-  const bookingSeeder = new BookingSeeder({ config })
-  bookingSeeder.createBooking()
+  const categorySeeder = new CategorySeeder({ config })
+  categorySeeder.createcategory()
 
   // Obtener CSRF token
   const xsrfTokenGet = await request(app).get('/csrf')
@@ -89,174 +74,173 @@ afterAll(async () => {
   await databasemigration.deleteDB()
 })
 
-// TEST
-describe('API /bookings', () => {
-  test('should create a booking.', async () => {
+// TESTS
+describe('API /categories', () => {
+  test('should create a category.', async () => {
     const response = await request(app)
-      .post('/bookings')
-      .set('_xsrf_token', xsrfToken)
-      .set('Cookie', `_xsrf_token=${xsrfToken}`)
-      .send(newBooking)
+      .post('/categories')
+      .set('_xsrf_token', xsrfTokenAdmin)
+      .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
+      .send(newCategory)
     expect(response.statusCode).toBe(201)
+    expect(response.body).toEqual({ message: 'Categoría creada.' })
   })
 
-  test('should not create a booking because schema is not valid.', async () => {
+  test('should not create a category because schema is not valid.', async () => {
     const response = await request(app)
-      .post('/bookings')
-      .set('_xsrf_token', xsrfToken)
-      .set('Cookie', `_xsrf_token=${xsrfToken}`)
-      .send(wrongBooking)
+      .post('/categories')
+      .set('_xsrf_token', xsrfTokenAdmin)
+      .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
+      .send(wrongCategory)
     expect(response.statusCode).toBe(422)
   })
 
-  test('should not create a booking because xsrf_token was not sent.', async () => {
+  test('should not create a category because xsrf_token was not sent.', async () => {
     const response = await request(app)
-      .post('/bookings')
-      .send(newBooking)
+      .post('/categories')
+      .set('Cookie', jwt) // jwt es lo mismo que `_lh_tk=${jwtCookie}`
+      .send(newCategory)
     expect(response.statusCode).toBe(403)
   })
 
-  test('should get all bookings.', async () => {
+  test('should not create a category because user is not logged in', async () => {
     const response = await request(app)
-      .get('/bookings')
-      .set('Cookie', jwt)
-    expect(response.statusCode).toBe(200)
-    bookings = JSON.parse(response.text).data
-  })
-
-  test('should not get all bookings because not logged in.', async () => {
-    const response = await request(app)
-      .get('/bookings')
+      .post('/categories')
+      .set('_xsrf_token', xsrfToken)
+      .set('Cookie', `_xsrf_token=${xsrfToken}`)
+      .send(newCategory)
+      .catch(error => {
+        console.error('Error: ', error)
+      })
     expect(response.statusCode).toBe(401)
   })
 
-  test('should get a booking by id.', async () => {
+  test('should get all categories.', async () => {
     const response = await request(app)
-      .get(`/bookings/${bookings[0].id}`)
-      .set('Cookie', jwt)
+      .get('/categories')
+    expect(response.statusCode).toBe(200)
+    categories = JSON.parse(response.text).data
+  })
+
+  test('should get a category by id.', async () => {
+    const response = await request(app)
+      .get(`/categories/${categories[0].id}`)
     expect(response.statusCode).toBe(200)
   })
 
-  test('should not get a booking by id because not found.', async () => {
+  test('should not get a category by id because not found.', async () => {
     const response = await request(app)
-      .get('/bookings/1')
-      .set('Cookie', jwt)
+      .get('/categories/55')
     expect(response.statusCode).toBe(404)
   })
 
-  test('should not get a booking by id because user is not logged in.', async () => {
+  test('should update a category by id', async () => {
     const response = await request(app)
-      .get(`/bookings/${bookings[0].id}`)
-    expect(response.statusCode).toBe(401)
-  })
-
-  test('should update a booking by id', async () => {
-    const response = await request(app)
-      .patch(`/bookings/${bookings[0].id}`)
+      .patch(`/categories/${categories[0].id}`)
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
-      .send(updateBooking)
+      .send(updatedCategory)
     expect(response.status).toBe(200)
   })
 
-  test('should not update a booking by id because schema is not valid', async () => {
+  test('should not update a category by id because schema is not valid', async () => {
     const response = await request(app)
-      .patch(`/bookings/${bookings[0].id}`)
+      .patch(`/categories/${categories[0].id}`)
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
-      .send(wrongBooking)
+      .send(wrongCategory)
     expect(response.status).toBe(422)
   })
 
-  test('should not update a booking by id because CSRF Protection.', async () => {
+  test('should not update a category by id because CSRF Protection.', async () => {
     const response = await request(app)
-      .patch(`/bookings/${bookings[0].id}`)
+      .patch(`/categories/${categories[0].id}`)
       .set('Cookie', jwt)
-      .send(updateBooking)
+      .send(updatedCategory)
     expect(response.status).toBe(403)
   })
 
-  test('should not update a booking by id because not logged in.', async () => {
+  test('should not update a category by id because not logged in.', async () => {
     const response = await request(app)
-      .patch(`/bookings/${bookings[0].id}`)
+      .patch(`/categories/${categories[0].id}`)
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`) // Si no se está logueado debe ir con el csrf token sin jwt
-      .send(updateBooking)
+      .send(updatedCategory)
     expect(response.status).toBe(401)
   })
 
-  test('should delete a booking by id', async () => {
+  test('should delete a category by id', async () => {
     const response = await request(app)
-      .delete(`/bookings/${bookings[0].id}`)
+      .delete(`/categories/${categories[0].id}`)
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
     expect(response.status).toBe(200)
   })
 
-  test('should not delete a booking by id because not found', async () => {
+  test('should not delete a message by id because not found', async () => {
     const response = await request(app)
-      .delete('/bookings/1}')
+      .delete('/categories/55}')
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
     expect(response.status).toBe(404)
   })
 
-  test('should not delete a booking by id because CSRF Protection.', async () => {
+  test('should not delete a message by id because CSRF Protection.', async () => {
     const response = await request(app)
-      .delete(`/bookings/${bookings[0].id}`)
+      .delete(`/categories/${categories[0].id}`)
       .set('Cookie', jwt)
     expect(response.status).toBe(403)
   })
 
-  test('should not delete a booking by id because not logged in.', async () => {
+  test('should not delete a message by id because not logged in.', async () => {
     const response = await request(app)
-      .delete(`/bookings/${bookings[0].id}`)
+      .delete(`/categories/${categories[0].id}`)
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`)
     expect(response.status).toBe(401)
   })
 
-  test('should delete a selection of bookings.', async () => {
+  test('should delete a selection of categories.', async () => {
     const idArray = {
-      ids: [bookings[1].id, bookings[2].id]
+      ids: [categories[1].id, categories[2].id, categories[3].id]
     }
     const response = await request(app)
-      .delete('/bookings')
+      .delete('/categories')
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
       .send(idArray)
     expect(response.status).toBe(200)
   })
 
-  test('should not delete a selection of bookings because not found.', async () => {
+  test('should not delete a selection of categories because not found.', async () => {
     const idArray = {
-      ids: ['1', '2', '3']
+      ids: [55, 56, 57]
     }
     const response = await request(app)
-      .delete('/bookings')
+      .delete('/categories')
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
       .send(idArray)
     expect(response.status).toBe(404)
   })
 
-  test('should not delete a selection of bookings because CSRF Protection.', async () => {
+  test('should not delete a selection of categories because CSRF Protection.', async () => {
     const idArray = {
-      ids: [bookings[1].id, bookings[2].id]
+      ids: [categories[1].id, categories[2].id, categories[3].id]
     }
     const response = await request(app)
-      .delete('/bookings')
+      .delete('/categories')
       .set('Cookie', jwt)
       .send(idArray)
     expect(response.status).toBe(403)
   })
 
-  test('should not delete a selection of bookings because not logged in.', async () => {
+  test('should not delete a selection of categories because not logged in.', async () => {
     const idArray = {
-      ids: [bookings[1].id, bookings[2].id]
+      ids: [categories[1].id, categories[2].id, categories[3].id]
     }
     const response = await request(app)
-      .delete('/bookings')
+      .delete('/categories')
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`)
       .send(idArray)

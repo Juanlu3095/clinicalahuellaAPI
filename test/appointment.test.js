@@ -52,7 +52,7 @@ jest.unstable_mockModule('../src/services/EmailService.js', () => ({
 // Además el mock se invoca antes de traernos el app auténtico, viéndose afectado por el mock
 const { app } = await import('./config/apptest.js')
 
-// CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLA APPOINTMENTS Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
+// CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLAS APPOINTMENTS Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
 beforeAll(async () => {
   const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE_TEST, FIRST_USER_EMAIL, FIRST_USER_PASS } = process.env
   const config = {

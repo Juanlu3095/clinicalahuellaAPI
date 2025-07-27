@@ -32,7 +32,7 @@ const wrongNewMessage = {
   mensaje: 'Este es el mensaje creado.'
 }
 
-// CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLA MESSAGES Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
+// CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLAS MESSAGES Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
 beforeAll(async () => {
   const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE_TEST, FIRST_USER_EMAIL, FIRST_USER_PASS } = process.env
   const config = {
@@ -140,9 +140,8 @@ describe('API /messages', () => {
       .get(`/messages/${messages[0].id}`)
     expect(response.statusCode).toBe(401)
   })
-
   test('should update a message by id', async () => {
-    const updatedMessage = {
+    const updatedMessage = { // debería poder pasarse sólo algunos datos y no todo el schema
       nombre: 'Pepe',
       apellidos: 'Jiménez',
       email: 'pepe@gmail.com',
@@ -204,6 +203,55 @@ describe('API /messages', () => {
     }
     const response = await request(app)
       .put(`/messages/${messages[0].id}`)
+      .set('_xsrf_token', xsrfToken)
+      .set('Cookie', `_xsrf_token=${xsrfToken}`) // Si no se está logueado debe ir con el csrf token sin jwt
+      .send(updatedMessage)
+    expect(response.status).toBe(401)
+  })
+
+  test('should patch a message by id', async () => {
+    const updatedMessage = { // debería poder pasarse sólo algunos datos y no todo el schema
+      nombre: 'Pepe'
+    }
+
+    const response = await request(app)
+      .patch(`/messages/${messages[0].id}`)
+      .set('_xsrf_token', xsrfTokenAdmin)
+      .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
+      .send(updatedMessage)
+    expect(response.status).toBe(200)
+  })
+
+  test('should not patch a message by id because schema is not valid', async () => {
+    const wrongUpdatedMessage = {
+      nombre: 952122331
+    }
+
+    const response = await request(app)
+      .patch(`/messages/${messages[0].id}`)
+      .set('_xsrf_token', xsrfTokenAdmin)
+      .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
+      .send(wrongUpdatedMessage)
+    expect(response.status).toBe(422)
+  })
+
+  test('should not patch a message by id because CSRF Protection.', async () => {
+    const updatedMessage = {
+      nombre: 'Pepe'
+    }
+    const response = await request(app)
+      .patch(`/messages/${messages[0].id}`)
+      .set('Cookie', jwt)
+      .send(updatedMessage)
+    expect(response.status).toBe(403)
+  })
+
+  test('should not patch a message by id because not logged in.', async () => {
+    const updatedMessage = {
+      nombre: 'Pepe'
+    }
+    const response = await request(app)
+      .patch(`/messages/${messages[0].id}`)
       .set('_xsrf_token', xsrfToken)
       .set('Cookie', `_xsrf_token=${xsrfToken}`) // Si no se está logueado debe ir con el csrf token sin jwt
       .send(updatedMessage)
