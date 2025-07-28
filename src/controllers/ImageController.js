@@ -5,8 +5,14 @@ const __filename = fileURLToPath(import.meta.url) // Obtenemos el archivo desde 
 const __dirname = dirname(__filename) // Obtenemos el directorio en el que está __filename
 
 export class ImageController {
+  /**
+   * It returns a file from local disk
+   * @param {*} req The request parameter.
+   * @param {*} res The responseparameter
+   * @returns {Buffer}
+   */
   getByNombre = async (req, res) => {
     const { nombre } = req.params
-    res.sendFile(path.resolve(__dirname, '../') + `/storage/images/${nombre}`) // Obtenemos la url del archivo
+    return res.sendFile(path.resolve(__dirname, '../') + `/storage/images/${nombre}`) // Obtenemos la url del archivo
   }
 }

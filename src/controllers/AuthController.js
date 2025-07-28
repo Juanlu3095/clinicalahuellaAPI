@@ -66,7 +66,7 @@ export class AuthController {
 
     try {
       jwt.verify(jwtToken, JWT_SECRET)
-      return res.clearCookie('_lh_tk').send({ message: 'Cierre de sesión satisfactorio.' })
+      return res.clearCookie('_lh_tk').send({ message: 'Cierre de sesión satisfactorio.' }) // Envía un HEADER con: 'set-cookie': [ '_lh_tk=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT' ]
     } catch (error) {
       return res.status(401).json({ error: 'El usuario no está autenticado o la sesión expiró.' })
     }

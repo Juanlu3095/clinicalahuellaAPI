@@ -111,7 +111,7 @@ describe('API /auth', () => {
     expect(response.status).toBe(200)
   })
 
-  test('should not logout because user is not looged in.', async () => {
+  test('should not logout because user is not logged in.', async () => {
     const response = await request(app)
       .post('/auth/logout')
       .set('_xsrf_token', xsrfToken)
@@ -139,5 +139,6 @@ describe('API /auth', () => {
       .set('_xsrf_token', xsrfTokenAdmin)
       .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
     expect(response.status).toBe(200)
+    expect(response.header['set-cookie'][0]).toContain('_lh_tk=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT') // Comprobamos que se elimina el jwt con el header de Express
   })
 })
