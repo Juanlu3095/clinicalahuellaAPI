@@ -10,7 +10,7 @@ export const errorLogs = async (error) => {
     const fecha = fechaActual.toLocaleDateString()
     const hora = fechaActual.toLocaleTimeString()
 
-    const addError = appendFile('./storage/logs/errorlogs.txt', `\n[${fecha} ${hora}] ${error}`)
+    const addError = appendFile('./src/storage/logs/errorlogs.txt', `\n[${fecha} ${hora}] ${error}`)
     await addError
   } catch (error) {
     console.error(error)

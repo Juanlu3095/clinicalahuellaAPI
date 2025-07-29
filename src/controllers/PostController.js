@@ -77,8 +77,11 @@ export class PostController {
       } else {
         input.data.imagenId = null
       }
+      delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
+    } else {
+      delete input.data.imagen
+      input.data.imagenId = null
     }
-    delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
 
     const post = await this.postModel.create({ input: input.data })
 
@@ -134,8 +137,12 @@ export class PostController {
     const { id } = req.params
     const post = await this.postModel.getById({ id })
 
+    if (!post) {
+      return res.status(404).json({ error: 'Post no encontrado.' })
+    }
+
     // Eliminar imagen (archivo + row en BD) si el post tiene asignado una imagen
-    if (post[0].imagen) {
+    if (post[0].imagen != null) {
       await this.fileService.deleteImageDrive({ id: post[0].imagenId })
     }
 
@@ -151,13 +158,24 @@ export class PostController {
   deleteSelection = async (req, res) => {
     const { ids } = req.body
 
+    let idCorrectos = 0
+
     // Usamos await Promise.all() para que se ejecute todo esto antes de la siguiente línea
     await Promise.all(ids.map(async (id) => {
       const post = await this.postModel.getById({ id }) // Obtenemos todos los datos del post para luego usar la id de la imagen para borrarla
-      if (post[0].imagenId) { // Comprobamos si el post tiene imagen, ya que la imagen puede ser null y dar un error
-        await this.fileService.deleteImageDrive({ id: post[0].imagenId })
+
+      if (post) {
+        idCorrectos += 1
+
+        if (post[0].imagenId !== null) { // Comprobamos si el post tiene imagen, ya que la imagen puede ser null y dar un error
+          await this.fileService.deleteImageDrive({ id: post[0].imagenId })
+        }
       }
     }))
+
+    if (idCorrectos !== ids.length) {
+      return res.status(404).json({ error: 'Post(s) no encontrado(s).' })
+    }
 
     const query = await this.postModel.deleteSelection({ ids })
 

@@ -140,8 +140,9 @@ describe('API /messages', () => {
       .get(`/messages/${messages[0].id}`)
     expect(response.statusCode).toBe(401)
   })
+
   test('should update a message by id', async () => {
-    const updatedMessage = { // debería poder pasarse sólo algunos datos y no todo el schema
+    const updatedMessage = {
       nombre: 'Pepe',
       apellidos: 'Jiménez',
       email: 'pepe@gmail.com',

@@ -14,7 +14,7 @@ export class postModel {
                    WHERE 1=1` // Esto para poder añadir los AND sin preocuparse por cuál debe poner WHERE
       const values = [] // En este array incluimos los parámetros que se van necesitando en la consulta dependiendo de si se pasan o no
       if (categoria) {
-        query += ' AND categoria = ?'
+        query += ' AND categories.nombre = ?'
         values.push(categoria)
       }
 

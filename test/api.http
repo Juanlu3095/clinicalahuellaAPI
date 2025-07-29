@@ -129,7 +129,7 @@ GET http://localhost:3000/posts/slug/5-consejos-para-cuidadores
 Origin: http://localhost:4200
 
 ### Recuperar todas los posts filtrando por categoria
-GET http://localhost:3000/posts?categoria=1
+GET http://localhost:3000/posts?categoria=Perros
 Origin: http://localhost:4200
 
 ### Recuperar todas los posts filtrando por estado de publicación
@@ -169,7 +169,7 @@ Content-Type: application/json
 }
 
 ### Actualizar post
-PATCH http://localhost:3000/posts/4
+PATCH http://localhost:3000/posts/129
 Content-Type: application/json
 
 {
