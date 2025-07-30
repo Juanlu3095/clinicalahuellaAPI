@@ -1,14 +1,14 @@
 // import { app } from './config/apptest.js'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, test, jest } from '@jest/globals'
-import { DatabaseMigration } from '../src/database/migrations/database.js'
-import { PostMigration } from '../src/database/migrations/create_posts_table.js'
-import { CategoryMigration } from '../src/database/migrations/create_categories_table.js'
-import { ImageMigration } from '../src/database/migrations/create_images_table.js'
-import { UserMigration } from '../src/database/migrations/create_user_table.js'
-import { PostSeeder } from '../src/database/seeders/postseeder.js'
-import { CategorySeeder } from '../src/database/seeders/categoryseeder.js'
-import { UserSeeder } from '../src/database/seeders/userseeder.js'
+import { DatabaseMigration } from '../../src/database/migrations/database.js'
+import { PostMigration } from '../../src/database/migrations/create_posts_table.js'
+import { CategoryMigration } from '../../src/database/migrations/create_categories_table.js'
+import { ImageMigration } from '../../src/database/migrations/create_images_table.js'
+import { UserMigration } from '../../src/database/migrations/create_user_table.js'
+import { PostSeeder } from '../../src/database/seeders/postseeder.js'
+import { CategorySeeder } from '../../src/database/seeders/categoryseeder.js'
+import { UserSeeder } from '../../src/database/seeders/userseeder.js'
 
 let xsrfToken = ''
 let xsrfTokenAdmin = ''
@@ -67,7 +67,7 @@ const mockCreateFolderDrive = jest.fn()
 const mockStoreImageDrive = jest.fn()
 const mockDeleteImageDrive = jest.fn()
 // Reemplazamos el constructor de DriveService
-jest.mock('../src/services/DriveService.js', () => {
+jest.mock('../../src/services/DriveService.js', () => {
   return jest.fn().mockImplementation(() => {
     return {
       getFoldersByName: mockGetFoldersByName,
@@ -78,15 +78,15 @@ jest.mock('../src/services/DriveService.js', () => {
   })
 })
 
-// Mockeamos database/utilities/validations para que salga o no un error 409
+// Mockeamos database/utilities/validations para que salga o no un error 409. Luego dentro de cada test podemos simular el returnValue
 const mockRepeatedValues = jest.fn()
-jest.unstable_mockModule('../src/database/utilities/validations.js', () => ({
+jest.unstable_mockModule('../../src/database/utilities/validations.js', () => ({
   repeatedValues: mockRepeatedValues
 }))
 
 // jest.unstable_mockModule debe ir antes que la importación de app para que sea compatible con ES Modules
 // Además el mock se invoca antes de traernos el app auténtico, viéndose afectado por el mock
-const { app } = await import('./config/apptest.js')
+const { app } = await import('../config/apptest.js')
 
 // CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLAS POSTS Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
 beforeAll(async () => {

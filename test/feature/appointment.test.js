@@ -1,11 +1,11 @@
 // import { app } from './config/apptest.js'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals'
-import { DatabaseMigration } from '../src/database/migrations/database.js'
-import { UserMigration } from '../src/database/migrations/create_user_table.js'
-import { UserSeeder } from '../src/database/seeders/userseeder.js'
-import { AppointmentMigration } from '../src/database/migrations/create_appointment_table.js'
-import { AppointmentSeeder } from '../src/database/seeders/appointmentseeder.js'
+import { DatabaseMigration } from '../../src/database/migrations/database.js'
+import { UserMigration } from '../../src/database/migrations/create_user_table.js'
+import { UserSeeder } from '../../src/database/seeders/userseeder.js'
+import { AppointmentMigration } from '../../src/database/migrations/create_appointment_table.js'
+import { AppointmentSeeder } from '../../src/database/seeders/appointmentseeder.js'
 
 let xsrfToken = ''
 let xsrfTokenAdmin = ''
@@ -44,13 +44,13 @@ const updatedAppointment = {
 // https://stackoverflow.com/questions/78428523/jest-mock-typeerror-cannot-assign-to-read-only-property
 // https://archive.jestjs.io/docs/es-es/next/es6-class-mocks
 const mockEmailAppointment = jest.fn().mockResolvedValue('Mensaje enviado.')
-jest.unstable_mockModule('../src/services/EmailService.js', () => ({
+jest.unstable_mockModule('../../src/services/EmailService.js', () => ({
   sendEmailAppointment: mockEmailAppointment
 }))
 
 // jest.unstable_mockModule debe ir antes que la importación de app para que sea compatible con ES Modules
 // Además el mock se invoca antes de traernos el app auténtico, viéndose afectado por el mock
-const { app } = await import('./config/apptest.js')
+const { app } = await import('../config/apptest.js')
 
 // CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LAS TABLAS APPOINTMENTS Y USERS, ADEMÁS DE CREAR UN USUARIO VÁLIDO CON EL SEED
 beforeAll(async () => {

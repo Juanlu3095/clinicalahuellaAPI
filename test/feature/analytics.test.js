@@ -1,9 +1,9 @@
-import { app } from './config/apptest.js'
+import { app } from '../config/apptest.js'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals'
-import { DatabaseMigration } from '../src/database/migrations/database.js'
-import { UserMigration } from '../src/database/migrations/create_user_table.js'
-import { UserSeeder } from '../src/database/seeders/userseeder.js'
+import { DatabaseMigration } from '../../src/database/migrations/database.js'
+import { UserMigration } from '../../src/database/migrations/create_user_table.js'
+import { UserSeeder } from '../../src/database/seeders/userseeder.js'
 
 let xsrfToken = ''
 let jwt = ''

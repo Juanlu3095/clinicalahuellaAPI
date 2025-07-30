@@ -1,9 +1,9 @@
 // import { app } from './config/apptest.js'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals'
-import { DatabaseMigration } from '../src/database/migrations/database.js'
-import { UserMigration } from '../src/database/migrations/create_user_table.js'
-import { UserSeeder } from '../src/database/seeders/userseeder.js'
+import { DatabaseMigration } from '../../src/database/migrations/database.js'
+import { UserMigration } from '../../src/database/migrations/create_user_table.js'
+import { UserSeeder } from '../../src/database/seeders/userseeder.js'
 
 let xsrfToken = ''
 let xsrfTokenAdmin = ''
@@ -34,11 +34,11 @@ const dummyResponse = {
 }
 
 const mockAiChat = jest.fn().mockResolvedValue(dummyResponse)
-jest.unstable_mockModule('../src/services/AiService.js', () => ({
+jest.unstable_mockModule('../../src/services/AiService.js', () => ({
   AiChat: mockAiChat
 }))
 
-const { app } = await import('./config/apptest.js')
+const { app } = await import('../config/apptest.js')
 
 // CREACIÓN DE LA BASE DE DATOS y MIGRACIÓN DE LA TABLA USERS Y CRE3ACIÓN DE UN USUARIO VÁLIDO CON EL SEED
 beforeAll(async () => {

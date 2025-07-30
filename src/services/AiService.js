@@ -28,7 +28,6 @@ export const AiSimpleMessage = async (query) => {
 /**
  * It lets to have a chat with Gemini AI. You need to send the chat history with every message to work.
  * @param {Object} messages Messages from both user and model received from Frontend
- * @param {string} query
  * @returns {GenerateContentResponse}
  */
 export const AiChat = async (messages) => {

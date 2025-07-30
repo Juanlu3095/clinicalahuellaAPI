@@ -1,4 +1,4 @@
-import { app } from './config/apptest.js'
+import { app } from '../config/apptest.js'
 import request from 'supertest'
 import { describe, expect, test } from '@jest/globals'
 
