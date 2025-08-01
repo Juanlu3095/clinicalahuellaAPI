@@ -48,12 +48,13 @@ describe('AiService', () => {
   test('should get a simple response from ai', async () => {
     mockAiSimpleMessage.mockResolvedValue(aiResponse)
     const response = await AiSimpleMessage(simpleMessage)
+    expect(mockAiSimpleMessage).toHaveBeenCalledWith(simpleMessage)
     expect(response.candidates[0].content.role).toBe('model')
     expect(response.candidates[0].content.parts[0].text).toEqual('¡Hola! ¿En qué puedo ayudarte hoy?\n')
   })
 
   test('should not get a simple response from ai', async () => {
-    const googleAiMock = jest.mock('@google/genai', () => {
+    const googleAiMock = jest.mock('@google/genai', () => { // se usa mock y no unstable_mockModule porque el módulo no será ESModules
       return {
         GoogleGenAI: jest.fn().mockImplementation(() => ({ // El objeto instanciado
           models: () => ({ // La propiedad dentro del objeto
@@ -67,6 +68,7 @@ describe('AiService', () => {
       await AiSimpleMessage(simpleMessage)
     } catch (error) {
       expect(error).toEqual(new Error(dummyError))
+      expect(mockAiSimpleMessage).toHaveBeenCalledWith(simpleMessage)
       expect(googleAiMock).toHaveBeenCalled()
       expect(mockErrorlLogs).toHaveBeenCalledWith(dummyError)
     }
@@ -75,6 +77,7 @@ describe('AiService', () => {
   test('should get a response from chat with ai', async () => {
     mockAiChat.mockResolvedValue(aiResponse)
     const response = await AiChat(chatHistory)
+    expect(mockAiChat).toHaveBeenCalledWith(chatHistory)
     expect(response.candidates[0].content.role).toBe('model')
     expect(response.candidates[0].content.parts[0].text).toBe('¡Hola! ¿En qué puedo ayudarte hoy?\n')
   })
@@ -96,6 +99,7 @@ describe('AiService', () => {
     try {
       await AiChat(chatHistory)
     } catch (error) {
+      expect(mockAiChat).toHaveBeenCalledWith(chatHistory)
       expect(error).toEqual(new Error(dummyError))
       expect(googleAiMock).toHaveBeenCalled()
       expect(mockErrorlLogs).toHaveBeenCalledWith(dummyError)

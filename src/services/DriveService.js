@@ -33,7 +33,7 @@ export class DriveService {
       const folders = response.data.files
       return folders
     } catch (error) {
-      console.error(error)
+      await errorLogs(error)
     }
   }
 

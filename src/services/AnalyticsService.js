@@ -1,4 +1,5 @@
 import { BetaAnalyticsDataClient } from '@google-analytics/data'
+import { errorLogs } from './errorlogs.js'
 
 const { GOOGLE_CLIENT_SERVICE_EMAIL, GOOGLE_CLIENT_SERVICE_PRIVATE_KEY, PROPERTY_ID } = process.env
 
@@ -14,27 +15,31 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
  * @returns Array
  */
 export const getPageUrlsAnalytics = async () => {
-  const [response] = await analyticsDataClient.runReport({
-    property: `properties/${PROPERTY_ID}`,
-    dimensions: [
-      { name: 'pagePath' }
-    ],
-    metrics: [
-      { name: 'screenPageViews' }
-    ],
-    dateRanges: [
-      {
-        startDate: '2025-04-01',
-        endDate: 'today'
-      }
-    ],
-    limit: 10
-  })
-  const datos = []
-  response.rows.forEach(data => {
-    datos.push({ dimension: data.dimensionValues[0].value, value: data.metricValues[0].value })
-  })
-  return datos
+  try {
+    const [response] = await analyticsDataClient.runReport({
+      property: `properties/${PROPERTY_ID}`,
+      dimensions: [
+        { name: 'pagePath' }
+      ],
+      metrics: [
+        { name: 'screenPageViews' }
+      ],
+      dateRanges: [
+        {
+          startDate: '2025-04-01',
+          endDate: 'today'
+        }
+      ],
+      limit: 10
+    })
+    const datos = []
+    response.rows.forEach(data => {
+      datos.push({ dimension: data.dimensionValues[0].value, value: data.metricValues[0].value })
+    })
+    return datos
+  } catch (error) {
+    await errorLogs(error)
+  }
 }
 
 /**
@@ -42,27 +47,31 @@ export const getPageUrlsAnalytics = async () => {
  * @returns Array
  */
 export const getCountryAnalytics = async () => {
-  const [response] = await analyticsDataClient.runReport({
-    property: `properties/${PROPERTY_ID}`,
-    dimensions: [
-      { name: 'country' }
-    ],
-    metrics: [
-      { name: 'screenPageViews' }
-    ],
-    dateRanges: [
-      {
-        startDate: '2025-04-01',
-        endDate: 'today'
-      }
-    ],
-    limit: 10
-  })
-  const datos = []
-  response.rows.forEach(data => {
-    datos.push({ dimension: data.dimensionValues[0].value, value: data.metricValues[0].value })
-  })
-  return datos
+  try {
+    const [response] = await analyticsDataClient.runReport({
+      property: `properties/${PROPERTY_ID}`,
+      dimensions: [
+        { name: 'country' }
+      ],
+      metrics: [
+        { name: 'screenPageViews' }
+      ],
+      dateRanges: [
+        {
+          startDate: '2025-04-01',
+          endDate: 'today'
+        }
+      ],
+      limit: 10
+    })
+    const datos = []
+    response.rows.forEach(data => {
+      datos.push({ dimension: data.dimensionValues[0].value, value: data.metricValues[0].value })
+    })
+    return datos
+  } catch (error) {
+    await errorLogs(error)
+  }
 }
 
 /**
@@ -70,24 +79,28 @@ export const getCountryAnalytics = async () => {
  * @returns Array {dimension: string, value: string}
  */
 export const getDeviceAnalytics = async () => {
-  const [response] = await analyticsDataClient.runReport({
-    property: `properties/${PROPERTY_ID}`,
-    dimensions: [
-      { name: 'deviceCategory' }
-    ],
-    metrics: [
-      { name: 'screenPageViews' }
-    ],
-    dateRanges: [
-      {
-        startDate: '2025-04-01',
-        endDate: 'today'
-      }
-    ]
-  })
-  const datos = []
-  response.rows.forEach(data => {
-    datos.push({ dimension: data.dimensionValues[0].value, value: data.metricValues[0].value })
-  })
-  return datos
+  try {
+    const [response] = await analyticsDataClient.runReport({
+      property: `properties/${PROPERTY_ID}`,
+      dimensions: [
+        { name: 'deviceCategory' }
+      ],
+      metrics: [
+        { name: 'screenPageViews' }
+      ],
+      dateRanges: [
+        {
+          startDate: '2025-04-01',
+          endDate: 'today'
+        }
+      ]
+    })
+    const datos = []
+    response.rows.forEach(data => {
+      datos.push({ dimension: data.dimensionValues[0].value, value: data.metricValues[0].value })
+    })
+    return datos
+  } catch (error) {
+    await errorLogs(error)
+  }
 }
