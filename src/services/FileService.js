@@ -18,8 +18,9 @@ export class FileService {
     const matches = image.match(/^data:([A-Za-z-+/]+);base64,(.+)$/) // Comprueba si es un string en base64
 
     // Comprobamos que se cumpla regex
-    if (matches.length !== 3) {
+    if (matches === null || matches.length !== 3) {
       errorLogs(new Error('El string en base64 no es correcto.'))
+      return null
     }
 
     // Comprobamos que el archivo sea png o jpeg
@@ -32,9 +33,8 @@ export class FileService {
       try {
         await mkdir('./storage/images/') // Crea el directorio de images si no existe
       } catch (error) {
-        if (error instanceof Error) {
-          errorLogs(error)
-        }
+        errorLogs(error)
+        return null
       }
     }
 
@@ -55,9 +55,7 @@ export class FileService {
       if (imageId) return imageId
       return null
     } catch (error) {
-      if (error instanceof Error) {
-        errorLogs(error)
-      }
+      errorLogs(error)
     }
   }
 
@@ -66,16 +64,13 @@ export class FileService {
   * @param {number} id Image's id in database
   */
   deleteImage = async ({ id }) => {
-    const image = await this.imageModel.getById({ id }) // Obtenemos los datos de la imagen
-    const nombreArchivo = image[0].nombre // Obtenemos el nombre de la imagen
-
     try {
+      const image = await this.imageModel.getById({ id }) // Obtenemos los datos de la imagen
+      const nombreArchivo = image[0].nombre // Obtenemos el nombre de la imagen
       await unlink(`./storage/images/${nombreArchivo}`) // Elimina el archivo en storage
       await this.imageModel.delete({ id }) // Elimina la imagen de la base de datos
     } catch (error) {
-      if (error instanceof Error) {
-        errorLogs(error)
-      }
+      errorLogs(error)
     }
   }
 }

@@ -17,7 +17,7 @@ const mockstoreImageDrive = jest.fn()
 const mockdeleteImageDrive = jest.fn()
 const mockErrorlLogs = jest.fn()
 
-// Mock AiService. ¡OJO! Usar unstable_mockModule para ESModules
+// Mock DriveService. ¡OJO! Usar unstable_mockModule para ESModules
 jest.unstable_mockModule('../../src/services/DriveService.js', () => {
   return {
     DriveService: jest.fn().mockImplementation(({ ImageModel }) => { // El objeto instanciado con constructor
