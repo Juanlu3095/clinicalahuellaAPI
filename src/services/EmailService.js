@@ -12,25 +12,23 @@ const MAIL = process.env.MAIL_AUTH_USER
  * @param {string} email The email this mail is sent to.
  */
 export const sendEmailAppointment = async (data) => {
-  const { token } = await setOauth2client().getAccessToken()
-    .catch((error) => {
-      console.error(error) // CAMBIAR ESTO POR ERRORLOGS
+  try {
+    const { token } = await setOauth2client().getAccessToken()
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: MAIL,
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: token // Se necesita googleapi para obtener el accessToken
+      }
     })
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      type: 'OAuth2',
-      user: MAIL,
-      clientId: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
-      refreshToken: REFRESH_TOKEN,
-      accessToken: token // Se necesita googleapi para obtener el accessToken
-    }
-  })
+    const fecha = new Date(data.fecha).toLocaleDateString()
 
-  const fecha = new Date(data.fecha).toLocaleDateString()
-  try {
     await transporter.sendMail({
       from: '"Clínica veterinaria La Huella" <Clinica La Huella>',
       to: data.email,
@@ -43,8 +41,6 @@ export const sendEmailAppointment = async (data) => {
              <p>Te esperamos en nuestras instalaciones el dia y la hora indicadas, y si tienes alguna pregunta, no dudes en contactarnos.</p>`
     })
   } catch (error) {
-    if (error instanceof Error) {
-      errorLogs(error.stack)
-    }
+    error instanceof Error ? await errorLogs(error.stack) : await errorLogs(new Error(error).stack)
   }
 }

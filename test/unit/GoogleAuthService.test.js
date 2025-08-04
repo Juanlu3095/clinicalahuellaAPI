@@ -1,7 +1,7 @@
 import { describe, expect, test, jest, beforeEach } from '@jest/globals'
 import 'dotenv/config'
 
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN } = process.env // Mockear OAuth2 FALTA
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN } = process.env
 
 const mockSetCredentials = jest.fn()
 const mockOAuth2 = jest.fn().mockImplementation(() => { // Propiedad dentro de la propieadad de antes

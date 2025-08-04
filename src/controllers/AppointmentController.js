@@ -1,5 +1,6 @@
 import { validateAppointment, validatePartialAppointment } from '../schemas/AppointmentSchema.js'
 import { sendEmailAppointment } from '../services/EmailService.js'
+import { errorLogs } from '../services/errorlogs.js'
 
 /**
  * It allows to use a model for this controller
@@ -36,6 +37,10 @@ export class AppointmentController {
 
     if (appointment) {
       await sendEmailAppointment(input.data) // Enviamos el email
+        .catch((error) => {
+          error instanceof Error ? errorLogs(error.stack) : errorLogs(new Error(error).stack)
+          console.error(error)
+        })
       res.status(201).json({ message: 'Cita creada.' })
     } else {
       return res.status(500).json({ error: 'Cita no creada.' })
