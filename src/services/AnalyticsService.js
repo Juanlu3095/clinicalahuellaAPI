@@ -26,7 +26,7 @@ export const getPageUrlsAnalytics = async () => {
       ],
       dateRanges: [
         {
-          startDate: '2025-04-01',
+          startDate: '30daysAgo',
           endDate: 'today'
         }
       ],
@@ -58,7 +58,7 @@ export const getCountryAnalytics = async () => {
       ],
       dateRanges: [
         {
-          startDate: '2025-04-01',
+          startDate: '30daysAgo',
           endDate: 'today'
         }
       ],
@@ -90,7 +90,7 @@ export const getDeviceAnalytics = async () => {
       ],
       dateRanges: [
         {
-          startDate: '2025-04-01',
+          startDate: '30daysAgo',
           endDate: 'today'
         }
       ]

@@ -12,8 +12,8 @@ export const {
   cookieOptions: {
     secure: true,
     sameSite: 'none',
-    httpOnly: false,
-    maxAge: 1000 * 60 * 60
+    httpOnly: false, // Angular necesita leer la cookie para luego enviarla en los headers
+    maxAge: 1000 * 60 * 60 // 1 hora dura la cookie
   },
   getSecret: () => CSRF_SECRET,
   getCsrfTokenFromRequest: (req) => req.headers._xsrf_token, // Indica de donde se obtiene el token para CSRF Protection
