@@ -32,6 +32,8 @@ jobs:
           git rm -r test .env.example jest.config.js
       
       - name: Push on production branch
+        env:
+          WORK_SECRET: ${{ secrets.WORK_SECRET }}
         run: |
           git add .
           git commit -m "Update branch produccion to date: $(date +%F)"
