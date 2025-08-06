@@ -20,10 +20,10 @@ jobs:
       
       - name: Create branch produccion
         run: |
-          if !git ls-remote origin produccion; then
-            git branch produccion
+          if git show-ref --verify --quiet refs/heads/produccion; then
             git switch produccion
-          else 
+          else
+            git branch produccion
             git switch produccion
           fi
 
