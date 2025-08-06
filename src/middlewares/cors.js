@@ -6,7 +6,7 @@ export const applycors = () =>
       const ACCEPTED_ORIGINS = [
         'http://localhost:3000',
         'http://localhost:4200',
-        'https://juanlu3095.github.io/clinicalahuella/'
+        'https://juanlu3095.github.io'
       ]
 
       if (origin && ACCEPTED_ORIGINS.includes(origin)) {
