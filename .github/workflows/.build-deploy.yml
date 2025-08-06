@@ -38,7 +38,7 @@ jobs:
           git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/Juanlu3095/clinicalahuellaAPI.git
           git add .
           git commit -m "Update branch produccion to date: $(date +%F)"
-          git push origin produccion
+          git push --force origin produccion
 
 permissions:
   contents: write
