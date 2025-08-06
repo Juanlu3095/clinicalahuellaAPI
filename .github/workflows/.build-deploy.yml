@@ -17,9 +17,6 @@ jobs:
         run: |
           git config user.name "$(git log -n 1 --pretty=format:%an)"
           git config user.email "$(git log -n 1 --pretty=format:%ae)"
-
-      - name: Set Origin Url
-        run: git remote set-url origin https://github.com/Juanlu3095/clinicalahuellaAPI.git
       
       - name: Create branch produccion
         run: |
@@ -35,7 +32,10 @@ jobs:
           git rm -r test .env.example jest.config.js
       
       - name: Push on production branch
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
+          git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/Juanlu3095/clinicalahuellaAPI.git
           git add .
           git commit -m "Update branch produccion to date: $(date +%F)"
           git push origin produccion
