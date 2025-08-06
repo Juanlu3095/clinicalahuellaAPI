@@ -39,3 +39,6 @@ jobs:
           git add .
           git commit -m "Update branch produccion to date: $(date +%F)"
           git push origin produccion
+
+permissions:
+  contents: write
