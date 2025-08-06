@@ -18,6 +18,10 @@ jobs:
           git fetch origin produccion
           git switch produccion
 
+      - name: Synchronize branch produccion with main
+        run: |
+          git reset --hard origin/main
+
       - name: Identify myself
         run: |
           git config user.name "github-actions[bot]"
