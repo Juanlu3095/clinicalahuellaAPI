@@ -31,4 +31,4 @@ jobs:
         run: |
           git add .
           git commit -m "Update branch produccion to date: $(date +%F)"
-          git push
+          git push origin produccion --force
