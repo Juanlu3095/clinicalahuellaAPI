@@ -18,7 +18,8 @@ jobs:
 
       - name: Delete unnecessary files for production
         run : |
-          git rm -rf test .env.example jest.config.json
+          git rm -f.env.example jest.config.json
+          git rm -rf test
         
       - name: Push on production branch
         run: |
