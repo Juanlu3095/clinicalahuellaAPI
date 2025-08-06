@@ -15,14 +15,8 @@ jobs:
       
       - name: Identify myself
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Set origin url
-        env:
-          WORK_SECRET: ${{ secrets.WORK_SECRET }}
-        run: |
-          git remote set-url origin https://x-access-token:${WORK_SECRET}@github.com/Juanlu3095/clinicalahuellaAPI.git
+          git config user.name "$(git log -n 1 --pretty=format:%an)"
+          git config user.email "$(git log -n 1 --pretty=format:%ae)"
       
       - name: Create branch produccion
         run: |
