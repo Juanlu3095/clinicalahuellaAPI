@@ -13,22 +13,26 @@ jobs:
         with:
           fetch-depth: 0 
       
-      - name: Change to branch produccion
-        run: |
-          git fetch origin produccion
-          git switch produccion
-
-      - name: Synchronize branch produccion with main
-        run: |
-          git reset --hard origin/main
-
       - name: Identify myself
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-        
+      
+      - name: Create branch produccion
+        run: |
+          if !git ls-remote origin produccion; then
+            git branch produccion
+            git switch produccion
+          else 
+            git switch produccion
+          fi
+
+      - name: Delete unnecessary files and folders
+        run: |
+          git rm -r test .env.example jest.config.json
+      
       - name: Push on production branch
         run: |
           git add .
           git commit -m "Update branch produccion to date: $(date +%F)"
-          git push origin produccion --force
+          git push origin produccion
