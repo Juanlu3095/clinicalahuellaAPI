@@ -17,6 +17,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Set origin url
+        env:
+          WORK_SECRET: ${{ secrets.WORK_SECRET }}
+        run: |
+          git remote set-url origin https://x-access-token:${WORK_SECRET}@github.com/Juanlu3095/clinicalahuellaAPI.git
       
       - name: Create branch produccion
         run: |
@@ -32,8 +38,6 @@ jobs:
           git rm -r test .env.example jest.config.js
       
       - name: Push on production branch
-        env:
-          WORK_SECRET: ${{ secrets.WORK_SECRET }}
         run: |
           git add .
           git commit -m "Update branch produccion to date: $(date +%F)"
