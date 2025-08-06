@@ -15,10 +15,6 @@ jobs:
         run: |
           git fetch origin produccion
           git switch produccion
-
-      - name: Delete unnecessary files for production
-        run : |
-          git rm -r test .env.example jest.config.json
         
       - name: Push on production branch
         run: |
