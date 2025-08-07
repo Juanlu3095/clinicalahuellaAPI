@@ -62,11 +62,16 @@ export class AuthController {
       return res.status(401).json({ error: 'El usuario no está autenticado.' })
     }
 
-    const { JWT_SECRET } = process.env
+    const { JWT_SECRET, ENVIRONMENT } = process.env
 
     try {
       jwt.verify(jwtToken, JWT_SECRET)
-      return res.clearCookie('_lh_tk').send({ message: 'Cierre de sesión satisfactorio.' }) // Envía un HEADER con: 'set-cookie': [ '_lh_tk=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT' ]
+      return res.clearCookie('_lh_tk', {
+        httpOnly: true,
+        secure: ENVIRONMENT === 'production',
+        sameSite: 'none',
+        maxAge: 1000 * 60 * 60
+      }).send({ message: 'Cierre de sesión satisfactorio.' }) // Envía un HEADER con: 'set-cookie': [ '_lh_tk=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT' ]
     } catch (error) {
       return res.status(401).json({ error: 'El usuario no está autenticado o la sesión expiró.' })
     }
