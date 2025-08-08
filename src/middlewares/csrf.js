@@ -11,7 +11,7 @@ export const {
   cookieName: '_xsrf_token',
   cookieOptions: {
     secure: true,
-    sameSite: 'strict',
+    sameSite: 'none',
     httpOnly: true,
     maxAge: 1000 * 60 * 60 // 1 hora dura la cookie
   },
