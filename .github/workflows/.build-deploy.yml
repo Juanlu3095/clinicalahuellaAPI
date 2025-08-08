@@ -29,7 +29,7 @@ jobs:
 
       - name: Delete unnecessary files and folders
         run: |
-          git rm -r test .env.example jest.config.js
+          git rm -r test .github .env.example jest.config.js
       
       - name: Push on production branch
         env:
