@@ -20,7 +20,7 @@ export class PostController {
     const { categoria, estado, limit } = req.query
     let posts = await this.postModel.getAll({ categoria, estado, limit })
 
-    if (posts.length > 0) {
+    if (posts && posts.length > 0) {
       if (!isValidJwt(req.cookies._lh_tk)) posts = postsProtected({ posts })
       res.json({ message: 'Posts encontrados.', data: posts })
     } else {
