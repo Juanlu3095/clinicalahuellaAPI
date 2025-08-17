@@ -42,5 +42,6 @@ export const sendEmailAppointment = async (data) => {
     })
   } catch (error) {
     error instanceof Error ? await errorLogs(error.stack) : await errorLogs(new Error(error).stack)
+    console.error(error)
   }
 }

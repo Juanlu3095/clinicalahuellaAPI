@@ -43,12 +43,12 @@ export class AuthController {
       return res.status(401).json({ error: 'Usuario y/o contraseña incorrectos.' })
     }
 
-    const { JWT_SECRET, ENVIRONMENT } = process.env
+    const { JWT_SECRET } = process.env
     const token = jwt.sign({ user: `${user.nombre} ${user.apellidos}` }, JWT_SECRET, { expiresIn: '1h' })
 
     res.cookie('_lh_tk', token, {
       httpOnly: true, // La cookie sólo se puede acceder en el servidor
-      secure: ENVIRONMENT === 'production', // La cookie sólo se puede acceder en HTTPS. Si ENVIRONMENT es 'production' sale true
+      secure: true, // La cookie sólo se puede acceder en HTTPS. Si ENVIRONMENT es 'production' sale true
       sameSite: 'none', // Sólo se puede acceder desde el mismo dominio ?
       maxAge: 1000 * 60 * 60 // Validez máxima de 1 hora de la cookie
     }).json({ message: 'Usuario y contraseña correctos.', data: `${user.nombre} ${user.apellidos}` })
@@ -62,13 +62,13 @@ export class AuthController {
       return res.status(401).json({ error: 'El usuario no está autenticado.' })
     }
 
-    const { JWT_SECRET, ENVIRONMENT } = process.env
+    const { JWT_SECRET } = process.env
 
     try {
       jwt.verify(jwtToken, JWT_SECRET)
       return res.clearCookie('_lh_tk', {
         httpOnly: true,
-        secure: ENVIRONMENT === 'production',
+        secure: true,
         sameSite: 'none',
         maxAge: 1000 * 60 * 60
       }).send({ message: 'Cierre de sesión satisfactorio.' }) // Envía un HEADER con: 'set-cookie': [ '_lh_tk=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT' ]
