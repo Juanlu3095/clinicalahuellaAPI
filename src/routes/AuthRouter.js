@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { AuthController } from '../controllers/AuthController.js'
+import { verifyJwt } from '../middlewares/jwt.js'
 
 export const AuthRouter = ({ UserModel }) => {
   const authRouter = Router()
@@ -10,7 +11,7 @@ export const AuthRouter = ({ UserModel }) => {
 
   authRouter.post('/login', authController.login)
 
-  authRouter.post('/logout', authController.logout)
+  authRouter.post('/logout', verifyJwt, authController.logout)
 
   return authRouter
 }

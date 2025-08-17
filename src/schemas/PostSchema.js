@@ -25,5 +25,12 @@ export const validatePost = (post) => {
 }
 
 export const validatePartialPost = (post) => {
-  return Post.partial().safeParse(post)
+  return Post.partial({ // Indicamos los campos que van a ser opcionales.
+    contenido: true,
+    categoriaId: true,
+    imagen: true,
+    imagenId: true,
+    metadescripcion: true,
+    keywords: true
+  }).safeParse(post)
 }
