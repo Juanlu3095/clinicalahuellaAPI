@@ -9,8 +9,3 @@ const Login = z.object({
 export const validateLogin = (login) => {
   return Login.required().safeParse(login)
 }
-
-// Todos los campos son opcionales. Sólo se validarán aquellos campos que se indiquen
-export const validatePartialLogin = (login) => {
-  return Login.partial().safeParse(login)
-}

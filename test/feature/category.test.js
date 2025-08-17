@@ -95,6 +95,15 @@ describe('API /categories', () => {
     expect(response.statusCode).toBe(422)
   })
 
+  test('should not create a category because there is no name of category.', async () => {
+    const response = await request(app)
+      .post('/categories')
+      .set('_xsrf_token', xsrfTokenAdmin)
+      .set('Cookie', [`_xsrf_token=${xsrfTokenAdmin};_lh_tk=${jwtCookie}`])
+      .send()
+    expect(response.statusCode).toBe(422)
+  })
+
   test('should not create a category because xsrf_token was not sent.', async () => {
     const response = await request(app)
       .post('/categories')

@@ -1,4 +1,4 @@
-import { validatePartialCategory } from '../schemas/CategorySchema.js'
+import { validateCategory } from '../schemas/CategorySchema.js'
 
 /**
  * It allows to use a model for this controller
@@ -31,7 +31,7 @@ export class CategoryController {
   }
 
   create = async (req, res) => {
-    const input = validatePartialCategory(req.body)
+    const input = validateCategory(req.body)
     if (!input.success) {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
@@ -46,7 +46,7 @@ export class CategoryController {
   }
 
   patch = async (req, res) => {
-    const input = validatePartialCategory(req.body)
+    const input = validateCategory(req.body)
     const { id } = req.params
 
     if (!input.success) {

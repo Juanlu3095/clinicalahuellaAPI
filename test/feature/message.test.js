@@ -212,7 +212,10 @@ describe('API /messages', () => {
 
   test('should patch a message by id', async () => {
     const updatedMessage = { // debería poder pasarse sólo algunos datos y no todo el schema
-      nombre: 'Pepe'
+      nombre: 'Pepe',
+      apellidos: 'Sánchez',
+      email: 'psanchez@gmail.com',
+      mensaje: 'Éste es el mensaje'
     }
 
     const response = await request(app)

@@ -16,5 +16,8 @@ export const validateMessage = (message) => {
 
 // Todos los campos son opcionales. Sólo se validarán aquellos campos que se indiquen
 export const validatePartialMessage = (message) => {
-  return Message.partial().safeParse(message)
+  return Message.partial({
+    telefono: true,
+    asunto: true
+  }).safeParse(message)
 }
