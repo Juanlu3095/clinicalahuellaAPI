@@ -21,7 +21,6 @@ export const applycors = () =>
       // Esto es sólo para desarrollo, pues REST Client no manda origin ni tampoco es necesario para los test
       // si no se tiene una configuración personalizada de CORS.
       /* if (!origin) {
-        console.log('No hay origen: ', origin)
         return callback(null, true)
       } */
 

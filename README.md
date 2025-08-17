@@ -57,7 +57,15 @@ o para desarrollo:
 
 ## Testing
 
-La API utiliza Jest y Supertest para realizar las pruebas, además de valerse de las migraciones y los seeders para crear la base de datos, sus tablas y algunos valores con los que trabajar de forma automatizada. Para ejecutarlos:
+La API utiliza Jest y Supertest para realizar las pruebas, además de valerse de las migraciones y los seeders para crear la base de datos, sus tablas y algunos valores con los que trabajar de forma automatizada. Antes de ejecutarlos es necesario descomentar el siguiente código en middleware/cors.js:
+
+```bash
+  if (!origin) {
+    return callback(null, true)
+  }
+```
+
+Para ejecutar los tests:
 
 ```bash
   npm run test
