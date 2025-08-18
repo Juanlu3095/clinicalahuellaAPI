@@ -56,39 +56,43 @@ export class PostController {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
-    const repeatedSlug = repeatedValues('posts', 'slug', input.data.slug)
-    if (repeatedSlug > 0) return res.status(409).json({ error: 'Slug ya existente.' })
+    try {
+      const repeatedSlug = repeatedValues('posts', 'slug', input.data.slug)
+      if (repeatedSlug > 0) return res.status(409).json({ error: 'Slug ya existente.' })
 
-    // Gestión del archivo
-    if (input.data.imagen != null) {
-      // Obtenemos la id de la carpeta
-      let folderId
-      const folder = await this.fileService.getFoldersByName({ name: 'lahuella' })
-      if (folder.length === 0) {
-        folderId = await this.fileService.createFolderDrive({ folder: 'lahuella' })
-      } else {
-        folderId = folder[0].id
-      }
+      // Gestión del archivo
+      if (input.data.imagen != null) {
+        // Obtenemos la id de la carpeta
+        let folderId
+        const folder = await this.fileService.getFoldersByName({ name: 'lahuella' })
+        if (folder.length === 0) {
+          folderId = await this.fileService.createFolderDrive({ folder: 'lahuella' })
+        } else {
+          folderId = folder[0].id
+        }
 
-      // Guardamos la imagen en Drive y obtenemos la id de la imagen en la base de datos para meterla en la id de imagen en la tabla de posts
-      const fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folderId })
-      if (fileStoreId) {
-        input.data.imagenId = fileStoreId
+        // Guardamos la imagen en Drive y obtenemos la id de la imagen en la base de datos para meterla en la id de imagen en la tabla de posts
+        const fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folderId })
+        if (fileStoreId) {
+          input.data.imagenId = fileStoreId
+        } else {
+          input.data.imagenId = null
+        }
+        delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
       } else {
+        delete input.data.imagen
         input.data.imagenId = null
       }
-      delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
-    } else {
-      delete input.data.imagen
-      input.data.imagenId = null
-    }
 
-    const post = await this.postModel.create({ input: input.data })
+      const post = await this.postModel.create({ input: input.data })
 
-    if (post) {
-      res.status(201).json({ message: 'Post creado.', data: post.insertId }) // Devolvemos la id del post creado, insertId lo devuelve la respuesta de mysql, como affectedRows
-    } else {
-      return res.status(500).json({ error: 'Post no creado.' })
+      if (post) {
+        res.status(201).json({ message: 'Post creado.', data: post.insertId }) // Devolvemos la id del post creado, insertId lo devuelve la respuesta de mysql, como affectedRows
+      } else {
+        return res.status(500).json({ error: 'Post no creado.' })
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -100,36 +104,46 @@ export class PostController {
       return res.status(422).json({ error: JSON.parse(input.error.message) })
     }
 
-    // Se comprueba que el slug no exista en los posts
-    const postToEdit = await this.postModel.getById({ id }) // Se recupera el post a editar
-    const repeatedSlug = await repeatedValues('posts', 'slug', input.data.slug) // Se obtiene el número de posts con el slug indicado
-    if (repeatedSlug > 1) { // Si hay más de 1 post con el slug indicado se devuelve un 409
-      return res.status(409).json({ error: 'Slug ya existente.' })
-    } else if (repeatedSlug === 1 && postToEdit[0].slug !== input.data.slug) { // Si hay uno repetido, puede ser el que se edita (que tiene el mismo slug porque no cambia) o puede ser el de otro post distinto
-      return res.status(409).json({ error: 'Slug ya existente.' })
-    }
-
-    // Gestión del archivo
-    if (input.data.imagen != null) {
-      const folder = await this.fileService.getFoldersByName({ name: 'lahuella' })
-      const fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folder[0].id }) // Contiene la id de la imagen en la BD
-      const postOld = await this.postModel.getById({ id }) // Obtenemos el post para luego obtener la id de la imagen
-
-      if (postOld[0].imagenId) {
-        await this.fileService.deleteImageDrive({ id: postOld[0].imagenId }) // Eliminamos la imagen del storage y de la base de datos
+    try {
+      // Se comprueba que el slug no exista en los posts
+      const postToEdit = await this.postModel.getById({ id }) // Se recupera el post a editar
+      const repeatedSlug = await repeatedValues('posts', 'slug', input.data.slug) // Se obtiene el número de posts con el slug indicado
+      if (repeatedSlug > 1) { // Si hay más de 1 post con el slug indicado se devuelve un 409
+        return res.status(409).json({ error: 'Slug ya existente.' })
+      } else if (repeatedSlug === 1 && postToEdit[0].slug !== input.data.slug) { // Si hay uno repetido, puede ser el que se edita (que tiene el mismo slug porque no cambia) o puede ser el de otro post distinto
+        return res.status(409).json({ error: 'Slug ya existente.' })
       }
 
-      if (fileStoreId) {
-        input.data.imagenId = fileStoreId
-      }
-    }
-    delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
+      // Gestión del archivo
+      if (input.data.imagen != null) {
+        const folder = await this.fileService.getFoldersByName({ name: 'lahuella' })
+        let fileStoreId
+        if (!folder) {
+          const newFolderId = await this.fileService.createFolderDrive({ folder: 'lahuella' })
+          fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: newFolderId }) // Contiene la id de la imagen en la BD
+        } else {
+          fileStoreId = await this.fileService.storeImageDrive({ image: req.body.imagen, folder: folder[0].id }) // Contiene la id de la imagen en la BD
+        }
+        const postOld = await this.postModel.getById({ id }) // Obtenemos el post para luego obtener la id de la imagen
 
-    const post = await this.postModel.patch({ id, input: input.data })
-    if (post) {
-      res.json({ message: 'Post actualizado.' })
-    } else {
-      return res.status(404).json({ error: 'Post no encontrado.' })
+        if (postOld[0].imagenId) {
+          await this.fileService.deleteImageDrive({ id: postOld[0].imagenId }) // Eliminamos la imagen del storage y de la base de datos
+        }
+
+        if (fileStoreId) {
+          input.data.imagenId = fileStoreId
+        }
+      }
+      delete input.data.imagen // Borramos la imagen del input que ya no nos hace falta
+
+      const post = await this.postModel.patch({ id, input: input.data })
+      if (post) {
+        res.json({ message: 'Post actualizado.' })
+      } else {
+        return res.status(404).json({ error: 'Post no encontrado.' })
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
