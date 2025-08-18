@@ -76,3 +76,7 @@ o para uno en concreto:
 ```bash
   npm run test nombredeltest
 ```
+
+## Documentación
+
+Para ver la documentación de la aplicación haz clic <a href="https://drive.google.com/file/d/1YsyizaXtn3pvTXsNxCqhE_TFZQihNGDB/view?usp=drive_link">aquí</a>.
