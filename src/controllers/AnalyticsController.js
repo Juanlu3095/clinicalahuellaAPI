@@ -1,4 +1,4 @@
-import { getPageUrlsAnalytics, getCountryAnalytics, getDeviceAnalytics } from '../services/AnalyticsService.js'
+import { getPageUrlsAnalytics, getCountryAnalytics, getCityAnalytics, getDeviceAnalytics } from '../services/AnalyticsService.js'
 
 export class AnalyticsController {
   getPageurls = async (req, res) => {
@@ -12,6 +12,15 @@ export class AnalyticsController {
 
   getCountries = async (req, res) => {
     const data = await getCountryAnalytics()
+    if (data.length > 0) {
+      res.json({ message: 'Datos encontrados.', data })
+    } else {
+      res.status(500).json({ error: 'Datos no encontrados.' })
+    }
+  }
+
+  getCities = async (req, res) => {
+    const data = await getCityAnalytics()
     if (data.length > 0) {
       res.json({ message: 'Datos encontrados.', data })
     } else {

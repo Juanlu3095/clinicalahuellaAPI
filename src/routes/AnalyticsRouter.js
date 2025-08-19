@@ -11,6 +11,8 @@ export const AnalyticsRouter = () => {
 
   analyticsRouter.get('/country', verifyJwt, analyticsController.getCountries)
 
+  analyticsRouter.get('/city', verifyJwt, analyticsController.getCities)
+
   analyticsRouter.get('/device', verifyJwt, analyticsController.getDevices)
 
   return analyticsRouter

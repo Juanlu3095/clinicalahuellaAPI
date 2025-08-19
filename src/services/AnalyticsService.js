@@ -75,6 +75,38 @@ export const getCountryAnalytics = async () => {
 }
 
 /**
+ * It returns page visits by city from Google Analytics
+ * @returns Array
+ */
+export const getCityAnalytics = async () => {
+  try {
+    const [response] = await analyticsDataClient.runReport({
+      property: `properties/${PROPERTY_ID}`,
+      dimensions: [
+        { name: 'city' }
+      ],
+      metrics: [
+        { name: 'screenPageViews' }
+      ],
+      dateRanges: [
+        {
+          startDate: '30daysAgo',
+          endDate: 'today'
+        }
+      ],
+      limit: 10
+    })
+    const datos = []
+    response.rows.forEach(data => {
+      datos.push({ dimension: data.dimensionValues[0].value, value: data.metricValues[0].value })
+    })
+    return datos
+  } catch (error) {
+    await errorLogs(error)
+  }
+}
+
+/**
  * It returns page visits by device from Google Analytics
  * @returns Array {dimension: string, value: string}
  */

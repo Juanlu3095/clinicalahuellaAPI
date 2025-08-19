@@ -54,6 +54,12 @@ describe('API /analytics', () => {
     expect(response.status).toBe(200)
   })
 
+  test('should not get Analytics data by page url because user is not authenticated', async () => {
+    const response = await request(app)
+      .get('/analytics/pageurl')
+    expect(response.status).toBe(401)
+  })
+
   test('should get Analytics data by country', async () => {
     const response = await request(app)
       .get('/analytics/country')
@@ -61,10 +67,35 @@ describe('API /analytics', () => {
     expect(response.status).toBe(200)
   })
 
+  test('should not get Analytics data by country because user is not authenticated', async () => {
+    const response = await request(app)
+      .get('/analytics/country')
+    expect(response.status).toBe(401)
+  })
+
+  test('should get Analytics data by city', async () => {
+    const response = await request(app)
+      .get('/analytics/city')
+      .set('Cookie', jwt)
+    expect(response.status).toBe(200)
+  })
+
+  test('should not get Analytics data by city because user is not authenticated', async () => {
+    const response = await request(app)
+      .get('/analytics/city')
+    expect(response.status).toBe(401)
+  })
+
   test('should get Analytics data by device', async () => {
     const response = await request(app)
       .get('/analytics/device')
       .set('Cookie', jwt)
     expect(response.status).toBe(200)
+  })
+
+  test('should not get Analytics data by device because user is not authenticated', async () => {
+    const response = await request(app)
+      .get('/analytics/device')
+    expect(response.status).toBe(401)
   })
 })
